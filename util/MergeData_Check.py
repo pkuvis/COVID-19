@@ -77,7 +77,7 @@ def citydict(Lables,data):
                 # print(g)
                 if int(g[0]) < 2:
                     continue
-                elif int(g[0]) >= 2 and int(g[1]) < 13:
+                elif int(g[0]) >= 2 and int(g[1]) < 16:
                     continue
                 if last[Lables[4]]!=int(cday_data[Lables[10]]):
                     cerrnum+=1
@@ -103,7 +103,7 @@ def writeCerr(filename,cerr):
         # print(g)
         if int(g[0]) < 2:
             continue
-        elif int(g[0]) >= 2 and int(g[1]) < 13:
+        elif int(g[0]) >= 2 and int(g[1]) < 16:
             continue
         pk=list(e.get(dates).keys())[0]
         ck=list(e.get(dates).get(pk).keys())[0]
@@ -368,7 +368,7 @@ def computedS(dateList,compdics,proList,Lables):
             # print(g)
             if int(g[0]) < 2:
                 continue
-            elif int(g[0]) >= 2 and int(g[1]) < 13:
+            elif int(g[0]) >= 2 and int(g[1]) < 16:
                 continue
 
             if last.get(Lables[4])!=now.get(Lables[10]):
@@ -443,7 +443,7 @@ def write2(filename,err):
         #print(g)
         if int(g[0])<2:
             continue
-        elif int(g[0])>=2 and int(g[1])<13:
+        elif int(g[0])>=2 and int(g[1])<16:
             continue
         s=pk.get(pro).get(dates)
         wstr=''
@@ -563,6 +563,7 @@ def checkMain(CheckFilepath,logpath='./log'):
     checkname = re.split('/|\\\\',str(filename))[-1]
     checktime = time.strftime("%Y%m%d_%H-%M-%S", time.localtime(time.time()))
     errs = dayErr+SumErr+cerrnum
+    #print(dayErr,SumErr,cerrnum)
     warnings = cdayWarning
 
 
