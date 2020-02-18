@@ -22,7 +22,9 @@ def readFile(filepath):
 
 def citydict(Lables,data):
     cerr=[]
+    warning=[]
     cerrnum=0
+    warningnum=0
     prodic = {}
     for Len in data:
         List = re.split(',|\\t', Len)
@@ -84,15 +86,35 @@ def citydict(Lables,data):
                     cerr.append({cday_data[Lables[0]]:{pk:{ck:{Lables[4]:last[Lables[4]],
                                                                Lables[10]:cday_data[Lables[10]]}}}})
                 if last[Lables[5]]!=int(cday_data[Lables[11]]):
-                    cerrnum+=1
-                    cerr.append({cday_data[Lables[0]]: {pk: {ck: {Lables[5]: last[Lables[5]],
+                    warningnum+=1
+                    warning.append({cday_data[Lables[0]]: {pk: {ck: {Lables[5]: last[Lables[5]],
                                                                   Lables[11]: cday_data[Lables[11]]}}}})
                 if last[Lables[6]]!=int(cday_data[Lables[12]]):
-                    cerrnum += 1
-                    cerr.append({cday_data[Lables[0]]: {pk: {ck: {Lables[6]: last[Lables[6]],
+                    warningnum += 1
+                    warning.append({cday_data[Lables[0]]: {pk: {ck: {Lables[6]: last[Lables[6]],
                                                                   Lables[12]: cday_data[Lables[12]]}}}})
-    return cerr,cerrnum
+    return cerr,cerrnum,warning,warningnum
 def writeCerr(filename,cerr):
+    fp = open(filename, "a+", encoding="utf-8")
+    fp.write("---------不符合规则:地区级复核，地区级当日之前的新增累加值 == 卫健委发布的当日累计值---------\n")
+    for e in cerr:
+        dates=list(e.keys())[0]
+        g = dates.split('月')
+
+        g[1] = g[1].split('日')[0]
+        # print(g)
+        if int(g[0]) < 2:
+            continue
+        elif int(g[0]) >= 2 and int(g[1]) < 16:
+            continue
+        pk=list(e.get(dates).keys())[0]
+        ck=list(e.get(dates).get(pk).keys())[0]
+        errs=e.get(dates).get(pk).get(ck)
+        erk=list(errs.keys())
+        wstr=dates+','+pk+','+ck+','+erk[0][2:4]+',地区级累加值为'+str(errs.get(erk[0]))+',卫健委累计值'+str(errs.get(erk[1]))
+        fp.write(wstr+'\n')
+    fp.write('\n')
+def writeCwarning(filename,cerr):
     fp = open(filename, "a+", encoding="utf-8")
     fp.write("---------不符合规则:地区级复核，地区级当日之前的新增累加值 == 卫健委发布的当日累计值---------\n")
     for e in cerr:
@@ -583,7 +605,7 @@ def checkMain(CheckFilepath,logpath='./log'):
     perrdics, cerrdics, compdics ,dayErr,cdayWarning= computeDay(prodicts, proList, Lables)
     #print(cerrdics)
     err,proAll,SumErr= computedS(dateList, compdics, proList, Lables)
-    cerr ,cerrnum= citydict(Lables, data)
+    cerr ,cerrnum,cwarning,cwarningnum= citydict(Lables, data)
 
 
 
@@ -591,7 +613,7 @@ def checkMain(CheckFilepath,logpath='./log'):
     checktime = time.strftime("%Y%m%d_%H-%M-%S", time.localtime(time.time()))
     errs = dayErr+SumErr+cerrnum
     #print(dayErr,SumErr,cerrnum)
-    warnings = cdayWarning
+    warnings = cdayWarning+cwarningnum
 
 
     pathlib.Path(logpath).mkdir(parents=True, exist_ok=True)
@@ -603,6 +625,7 @@ def checkMain(CheckFilepath,logpath='./log'):
     writeCerr(filename, cerr)
 
     write3(filename, cerrdics, dateList)
+    writeCwarning(filename,cwarning)
     filename = logpath+'/' + checkname.split('.')[0] + '_AcummulatedValueCheckResult'+ checktime +'.csv'
     #print(filename)
     #print(proAll)
