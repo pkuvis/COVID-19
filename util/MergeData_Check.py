@@ -219,7 +219,22 @@ def computeDay(prodicts, proLists, Lables):
             # ====================================================
 
             # 复核每个省每天的数据============================
+            if len(types)==1:
+                g = datekey.split('月')
+
+                g[1] = g[1].split('日')[0]
+                # print(g)
+                if int(g[0]) < 2:
+                    continue
+                elif int(g[0]) >= 2 and int(g[1]) < 16:
+                    continue
+                if typesSum[0]=='省级累计':
+                    dayErr += 1
+                    perrdics[datekey].append({prokey: {'': {Lables[4]:0},
+                                  typesSum[0]: {Lables[4]:protype.get(typesSum[0])[Lables[4]]}}})
+                #print(typesSum)
             if len(types) > 1 :
+                #print(typesSum)
                 if protype.get(typesSum[0])[Lables[4]] !=\
                         protype.get(typesSum[1])[Lables[4]]:
                     dayErr+=1
@@ -316,6 +331,9 @@ def computedS(dateList,compdics,proList,Lables):
     for pk in proList:
         proDic[pk]=[]
     for datekey in dateList:
+        if datekey=='' or compdics.get(datekey)==None:
+            continue
+        #print(datekey,)
         prokeys=list(compdics.get(datekey).keys())
         for pk in prokeys:
             proDic.get(pk).append({datekey:compdics.get(datekey).get(pk)})
@@ -422,11 +440,18 @@ def write1(filename,perrdics,dateList):
                 prodic=perrdics.get(datekey)[index]
                 pro=list(prodic.keys())[0]
                 #print(prodic.get(pro))
-                prodic.get(pro)['地区级累计']
-                type=list(prodic.get(pro)['地区级累计'].keys())[0]
+                #if
+                #prodic.get(pro)['地区级累计']
+                if prodic.get(pro).get('地区级累计')==None:
+                    wstr = pro + ',' + datekey + ',地区级数据缺失'
+                # #
+                # if type=='':
+
+                else:
+                    type = list(prodic.get(pro)['地区级累计'].keys())[0]
                 #print(pro,datekey)
-                wstr = pro + ',' + datekey + ',地区级'+type+'累加值为' + str(prodic.get(pro)['地区级累计'].get(type)) + ',' \
-                           + '省级新增' + str(prodic.get(pro)['省级累计'].get(type))
+                    wstr = pro + ',' + datekey + ',地区级'+type+'累加值为' + str(prodic.get(pro)['地区级累计'].get(type)) + ',' \
+                            + '省级新增' + str(prodic.get(pro)['省级累计'].get(type))
                 #print(wstr)
                 fp.write(wstr+'\n')
     fp.write('\n')
@@ -465,6 +490,8 @@ def write3(filename,cerrdics,dateList):
     fp.write('-----不符合规则：全国级复核，各省每日新增累加值 == 国家级当日累计值-----------------\n')
     for datekey in dateList:
         wstr = '';
+        if datekey=='':
+            continue
         if len(cerrdics.get(datekey))!=0:
             for index in range(0,len(cerrdics.get(datekey))):
                 prodic=cerrdics.get(datekey)[index]
@@ -589,7 +616,7 @@ def CMDUse():
     filePath=sys.argv[1]
     sys.exit(checkMain(filePath))
 if __name__ == '__main__':
-    # CheckFilepath = './Mergerdata/MergeData_20200216(3).csv'
+    # CheckFilepath = './Mergerdata/MergeData_20200217.csv'
     # print(checkMain(CheckFilepath))
     CMDUse()
     # filename = './Mergerdata/MergeData_20200216(3).csv'
