@@ -375,8 +375,8 @@ def date_ex(data):
         data.loc[row,'公开时间']=entoch(untrans_date)
     return data
 
-def add_last_data():
-    file='MergeData_temp.csv'
+def add_last_data(file):
+    #file='MergeData_temp_20200219.csv'
     try:
         data=pd.read_csv(file,error_bad_lines=False)
         daily=check_last_data(data)
@@ -419,10 +419,10 @@ def xlsx_to_csv(file):
     ex=date_ex(ex)
     return ex
 
-def check_xlsx_data():
+def check_xlsx_data(root_path):
     file_list=[]
     dir_list=[]
-    root_path='data'
+    #root_path='../data'
     get_file_path(root_path,file_list,dir_list)
     sys_str=platform.system()
     flag=''
@@ -450,7 +450,6 @@ def check_xlsx_data():
                 '''
                 check_error_data(data)
                 if result==1:
-                    print('wahaha')
                     continue
                 '''
                 data=pd.DataFrame(daily)
@@ -468,7 +467,7 @@ def check_xlsx_data():
         print(file)
 
 if __name__ == "__main__":
-
+    #生成当日MergeData_date.csv文件
     if not os.path.exists(outputfile):
         with open(outputfile,'w',newline='',encoding='utf_8_sig') as f:
             csv_write = csv.writer(f)
@@ -483,6 +482,20 @@ if __name__ == "__main__":
             for data in log:
                 Completed.append(data)
 
+    '''
     add_last_data()
+    func:读取基础数据，包含自运行起日之前日所有数据的MergeData_date.csv文件
+    para:输入参数为前日已保存的MergeData_date.csv文件
+    introduce:date为文件中日期标识符，如20200219，即2020年2月19日所生成,
+              MergeData文件与脚本所在同一级目录
+    '''
+    add_last_data('MergeData_20200219.csv')
+    '''
     check_xlsx_data()
+    func:校验今日所上传的所有数据文件,将当日上传文件中的数据合并至MergeData_date.csv中
+    para:上传数据所在的目录，当前脚本所在目录为util，数据所在目录为../data/unchecked/manual_collect/china，
+         为了防止读取错文件，建议输入目录为../data/unchecked/manual_collect/china
+
+    '''
+    check_xlsx_data('../data/unchecked/manual_collect/china')
     check.checkMain(outputfile,'./log')
