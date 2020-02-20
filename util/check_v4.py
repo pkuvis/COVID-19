@@ -19,8 +19,10 @@ daily_data=['新增确诊人数','新增疑似人数','新增治愈人数','新�
 old_colums=['公开时间','类别','省份','城市','新增确诊病例','新增治愈出院数','新增死亡数','核减','治愈核减','死亡核减','累计确诊人数','累计治愈人数','累计死亡人数']
 
 time_today=datetime.datetime.now().strftime('%Y%m%d')
+time_hour=datetime.datetime.now().strftime('%H-%M-%S')
 time_yesterday=(datetime.datetime.now()-datetime.timedelta(days=1)).strftime('%Y%m%d')
-outputfile='MergeData_'+time_today+'.csv'
+outputfile='MergeData_'+time_today+'_'+time_hour+'.csv'
+# outputfile='MergeData_'+time_today+'.csv'
 log_file='log_'+time_today+'.txt'
 completed_file='completed_'+time_today+'.txt'
 yes_completed_file='completed_'+time_yesterday+'.txt'
@@ -466,19 +468,19 @@ def check_xlsx_data(root_path):
         print('异常原因:',e)
         print(file)
 
-if __name__ == "__main__":
-    #生成当日MergeData_date.csv文件
+def checkv4_Main(mergeDataFile):
+    # 生成当日MergeData_date.csv文件
     if not os.path.exists(outputfile):
-        with open(outputfile,'w',newline='',encoding='utf_8_sig') as f:
+        with open(outputfile, 'w', newline='', encoding='utf_8_sig') as f:
             csv_write = csv.writer(f)
             csv_head = old_colums
             csv_write.writerow(csv_head)
-    
+
     if os.path.exists(yes_completed_file):
         os.remove(yes_completed_file)
 
     if os.path.exists(completed_file):
-        with open(completed_file,"r",encoding='utf_8_sig') as log:
+        with open(completed_file, "r", encoding='utf_8_sig') as log:
             for data in log:
                 Completed.append(data)
 
@@ -489,7 +491,8 @@ if __name__ == "__main__":
     introduce:date为文件中日期标识符，如20200219，即2020年2月19日所生成,
               MergeData文件与脚本所在同一级目录
     '''
-    add_last_data('MergeData_20200219.csv')
+    #add_last_data('MergeData_20200219.csv')
+    add_last_data(mergeDataFile)
     '''
     check_xlsx_data()
     func:校验今日所上传的所有数据文件,将当日上传文件中的数据合并至MergeData_date.csv中
@@ -498,4 +501,7 @@ if __name__ == "__main__":
 
     '''
     check_xlsx_data('../data/unchecked/manual_collect/china')
-    check.checkMain(outputfile,'./log')
+    return outputfile
+
+
+    #check.checkMain(outputfile,'./log')

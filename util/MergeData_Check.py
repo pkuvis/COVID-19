@@ -618,6 +618,7 @@ def checkMain(CheckFilepath,logpath='./log'):
 
     pathlib.Path(logpath).mkdir(parents=True, exist_ok=True)
     filename = logpath+'/' + checkname.split('.')[0] + '_CheckReport' + checktime + '.log'
+    logfile=filename
     writeHead(filename, checkname, checktime, errs, warnings)
     write1(filename, perrdics, dateList)
     write2(filename, err)
@@ -632,9 +633,9 @@ def checkMain(CheckFilepath,logpath='./log'):
     writeCSV(filename, err,proAll,Lables)
     #print('finished')
     if errs!=0:
-        return 'Faile'
+        return 'Faile',logfile
     else:
-        return 'Pass'
+        return 'Pass',logfile
 def CMDUse():
     filePath=sys.argv[1]
     sys.exit(checkMain(filePath))
