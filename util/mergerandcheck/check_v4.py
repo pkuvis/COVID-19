@@ -392,7 +392,6 @@ def date_ex(data):
     return data
 
 def add_last_data(file):
-    #file='MergeData_temp_20200219.csv'
     try:
         data=pd.read_csv(file,error_bad_lines=False)
         daily=check_last_data(data)
@@ -400,8 +399,8 @@ def add_last_data(file):
         data.to_csv(outputfile, mode='a',index=False, header=False,encoding='utf_8_sig')
 
     except Exception as e:
-        print(e)
-        print(file)
+        #print(e)
+        #print(file)
         with open(log_file,"a",encoding='utf_8_sig') as log:
             log.write('异常原因:'+str(e)+'\n')
             log.write(file+'\n')
@@ -461,7 +460,7 @@ def check_xlsx_data(file):
             data.to_csv(outputfile, mode='a',index=False, header=False,encoding='utf_8_sig')
 
         with open(completed_file,"a",encoding='utf_8_sig') as com:
-            com.write(file_name+'\n')
+            com.write(file+'\n')
         #print('end check')
         with open(log_file,"a",encoding='utf_8_sig') as log:
             for log_info in is_error_data:
@@ -473,7 +472,6 @@ def check_xlsx_data(file):
         with open(log_file,"a",encoding='utf_8_sig') as log:
             log.write('异常原因:'+str(e)+'\n')
             log.write(file+'\n')
-
 
 '''
 mergeDataFile:前日所生成的合并文件
