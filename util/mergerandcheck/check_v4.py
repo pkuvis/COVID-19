@@ -452,24 +452,11 @@ def check_xlsx_data(file):
 
     try:
         #for file in file_list:
-        file_name=file.split(flag)
-        file_name=file_name[len(file_name)-1]
-        #print(file_name)
-        '''
-        if file_name+'\n' in Completed:
-            continue
-        '''
-        if time_yesterday in file_name:
-            #print(file_name)
+
+        if time_yesterday in file:
             data=pd.read_excel(file,encoding='utf_8_sig')
             daily=exchangetooldcol(data)
-            '''
-            if daily==1:
-                continue
-            check_error_data(data)
-            if result==1:
-                continue
-            '''
+
             data=pd.DataFrame(daily)
             data.to_csv(outputfile, mode='a',index=False, header=False,encoding='utf_8_sig')
 
@@ -487,7 +474,7 @@ def check_xlsx_data(file):
             log.write('异常原因:'+str(e)+'\n')
             log.write(file+'\n')
 
-#if __name__ == "__main__":
+
 '''
 mergeDataFile:前日所生成的合并文件
          如：MergeData_20200220.csv
