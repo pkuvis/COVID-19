@@ -19,11 +19,10 @@ daily_data=['新增确诊人数','新增疑似人数','新增治愈人数','新�
 old_colums=['公开时间','类别','省份','城市','新增确诊病例','新增治愈出院数','新增死亡数','核减','治愈核减','死亡核减','累计确诊人数','累计治愈人数','累计死亡人数']
 
 time_today=datetime.datetime.now().strftime('%Y%m%d')
-time_hour=datetime.datetime.now().strftime('%H-%M-%S')
 time_yesterday=(datetime.datetime.now()-datetime.timedelta(days=1)).strftime('%Y%m%d')
-outputfile='MergeData_'+time_today+'_'+time_hour+'.csv'
-# outputfile='MergeData_'+time_today+'.csv'
+outputfile='MergeData_'+time_today+'.csv'
 log_file='log_'+time_today+'.txt'
+log_yes_file='log_'+time_yesterday+'.txt'
 completed_file='completed_'+time_today+'.txt'
 yes_completed_file='completed_'+time_yesterday+'.txt'
 Completed=[]
@@ -105,8 +104,25 @@ def check_null_data(data):
     return 0
 
 def entoch(charter,province):
+    ch_result=''
     if '甘肃' in province:
-        ch_result=str(charter.month)+'月'+str(charter.day+1)+'日'
+        days_2=[4,6,9,11]
+        month=charter.month
+        day=charter.day
+        day=day+1
+        if day==31:
+            month=str(1+month)
+            day=1
+        elif day==30:
+            if month in days_2:
+                month=str(1+month)
+                day=1
+        elif day==29 or day==28:
+            if month==2:
+                month=str(1+month)
+                day=1
+        ch_result=str(month)+'月'+str(day)+'日'
+        #print(ch_result)
     else:
         ch_result=str(charter.month)+'月'+str(charter.day)+'日'
     return ch_result
@@ -117,7 +133,7 @@ def exchangetooldcol(data):
     if judge_type != '序号':
         judge_data=data.copy()
         out_info='{}文件格式存在问题'.format(judge_data.iloc[2,5])
-        print(out_info)
+        #print(out_info)
         is_error_data.append(out_info)
         return 1
     daily={}
@@ -204,8 +220,6 @@ def exchangetooldcol(data):
             temp_data.loc['统计级别']='地区级'
             temp_data.loc['省份']=newname.get_pure_province_name(temp_data['省份'])
             temp_data.loc['城市']=newname.get_pure_city_name(temp_data['城市'])
-            if temp_data['城市']=='':
-                print(temp_data.loc['省份'])
             date=''
             try:
                 date=datetime.datetime.strptime(str(temp_data[colums[2]]).split('\r')[0],'%Y-%m-%d %H:%M:%S')
@@ -388,6 +402,9 @@ def add_last_data(file):
     except Exception as e:
         print(e)
         print(file)
+        with open(log_file,"a",encoding='utf_8_sig') as log:
+            log.write('异常原因:'+str(e)+'\n')
+            log.write(file+'\n')
 
 def check_all_data():
     file_list=[]
@@ -421,11 +438,11 @@ def xlsx_to_csv(file):
     ex=date_ex(ex)
     return ex
 
-def check_xlsx_data(root_path):
+#def check_xlsx_data(root_path):
+def check_xlsx_data(file):
     file_list=[]
     dir_list=[]
-    #root_path='../data'
-    get_file_path(root_path,file_list,dir_list)
+    #get_file_path(root_path,file_list,dir_list)
     sys_str=platform.system()
     flag=''
     if sys_str=='Windows' or sys_str=='windows':
@@ -434,53 +451,64 @@ def check_xlsx_data(root_path):
         flag='/'
 
     try:
-        for file in file_list:
-            file_name=file.split(flag)
-            file_name=file_name[len(file_name)-1]
+        #for file in file_list:
+        file_name=file.split(flag)
+        file_name=file_name[len(file_name)-1]
+        #print(file_name)
+        '''
+        if file_name+'\n' in Completed:
+            continue
+        '''
+        if time_yesterday in file_name:
             #print(file_name)
+            data=pd.read_excel(file,encoding='utf_8_sig')
+            daily=exchangetooldcol(data)
             '''
-            if file_name+'\n' in Completed:
+            if daily==1:
+                continue
+            check_error_data(data)
+            if result==1:
                 continue
             '''
-            if time_yesterday in file_name:
-            #if '20200216' in file_name:
-                print(file_name)
-                data=pd.read_excel(file,encoding='utf_8_sig')
-                daily=exchangetooldcol(data)
-                if daily==1:
-                    continue
-                '''
-                check_error_data(data)
-                if result==1:
-                    continue
-                '''
-                data=pd.DataFrame(daily)
-                data.to_csv(outputfile, mode='a',index=False, header=False,encoding='utf_8_sig')
+            data=pd.DataFrame(daily)
+            data.to_csv(outputfile, mode='a',index=False, header=False,encoding='utf_8_sig')
 
-            with open(completed_file,"a",encoding='utf_8_sig') as com:
-                com.write(file_name+'\n')
-        print('end check')
+        with open(completed_file,"a",encoding='utf_8_sig') as com:
+            com.write(file_name+'\n')
+        #print('end check')
         with open(log_file,"a",encoding='utf_8_sig') as log:
             for log_info in is_error_data:
                 log.write(log_info+'\n')
         
     except Exception as e:
-        print('异常原因:',e)
-        print(file)
+        #print('异常原因:',e)
+        #print(file)
+        with open(log_file,"a",encoding='utf_8_sig') as log:
+            log.write('异常原因:'+str(e)+'\n')
+            log.write(file+'\n')
 
-def checkv4_Main(mergeDataFile):
-    # 生成当日MergeData_date.csv文件
+#if __name__ == "__main__":
+'''
+mergeDataFile:前日所生成的合并文件
+         如：MergeData_20200220.csv
+data_dir:需要进行合并、校验的文件 
+         如：../../data/......./china/anhui/anhuiCaseStatistics_20200221.csv
+'''
+def checkv4_Main(mergeDataFile,data_dir):
+    #生成当日MergeData_date.csv文件
     if not os.path.exists(outputfile):
-        with open(outputfile, 'w', newline='', encoding='utf_8_sig') as f:
+        with open(outputfile,'w',newline='',encoding='utf_8_sig') as f:
             csv_write = csv.writer(f)
             csv_head = old_colums
             csv_write.writerow(csv_head)
-
+    
     if os.path.exists(yes_completed_file):
         os.remove(yes_completed_file)
+    if os.path.exists(log_yes_file):
+        os.remove(log_yes_file)
 
     if os.path.exists(completed_file):
-        with open(completed_file, "r", encoding='utf_8_sig') as log:
+        with open(completed_file,"r",encoding='utf_8_sig') as log:
             for data in log:
                 Completed.append(data)
 
@@ -491,17 +519,13 @@ def checkv4_Main(mergeDataFile):
     introduce:date为文件中日期标识符，如20200219，即2020年2月19日所生成,
               MergeData文件与脚本所在同一级目录
     '''
-    #add_last_data('MergeData_20200219.csv')
     add_last_data(mergeDataFile)
     '''
     check_xlsx_data()
-    func:校验今日所上传的所有数据文件,将当日上传文件中的数据合并至MergeData_date.csv中
-    para:上传数据所在的目录，当前脚本所在目录为util，数据所在目录为../data/unchecked/manual_collect/china，
-         为了防止读取错文件，建议输入目录为../data/unchecked/manual_collect/china
-
+    func:校验今日所上传的数据文件,将当日上传文件中的数据合并至MergeData_date.csv中
+    para:上传数据的完整目录文件名,如../../data/
     '''
-    check_xlsx_data('../data/unchecked/manual_collect/china')
+    check_xlsx_data(data_dir)
+
     return outputfile
-
-
     #check.checkMain(outputfile,'./log')
