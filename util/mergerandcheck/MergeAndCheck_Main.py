@@ -12,14 +12,15 @@ import shutil
 #None,None 说明通过成功的文件重复上传
 #Mergetemp.csv为最新无错误的mergedata文件
 def Merge(Checkprovins,Checkfilename):
-    parentpath = sys.argv[0].replace('/util/mergerandcheck/Main.py', '')
+    parentpath = sys.argv[0].replace('/util/mergerandcheck/MergeAndCheck_Main.py', '')
+    print(parentpath)
     chekfile = parentpath + '/data/unchecked/manual_collect/china/'+Checkprovins+'/'+Checkfilename
 
     movePath = parentpath + './data/checked/china/' + chekfile.split('/')[-2] + '/' + chekfile.split('/')[-1]
     if os.path.exists(movePath):
         os.remove(chekfile)
         return None,None
-    mergeFile=Merger.checkv4_Main('Mergetemp.csv')
+    mergeFile=Merger.checkv4_Main('Mergetemp.csv',chekfile)
 
     checkresult,logFilePath=check.checkMain(mergeFile)
     if checkresult=='Pass':
@@ -30,9 +31,10 @@ def Merge(Checkprovins,Checkfilename):
         os.remove(mergeFile)
     logfilePath=sys.argv[0].replace('Main.py','')+logFilePath[2:]
     return checkresult,logfilePath
-#if __name__ == "__main__":
-    #Merger.checkv4_Main('MergeData_20200219.csv')
-    #check.checkMain('MergeData_20200220_19-35-12.csv')
+# if __name__ == "__main__":
+#     #Merger.checkv4_Main('MergeData_20200219.csv')
+#     #check.checkMain('MergeData_20200220_19-35-12.csv')
+#     Merge('anhui', 'anhuiCaseStatistics_20200221.xlsx')
 
 
 
