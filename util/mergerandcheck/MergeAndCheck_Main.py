@@ -16,7 +16,7 @@ def Merge(Checkprovins,Checkfilename):
     print(parentpath)
     chekfile = parentpath + '/data/unchecked/manual_collect/china/'+Checkprovins+'/'+Checkfilename
 
-    movePath = parentpath + './data/checked/china/' + chekfile.split('/')[-2] + '/' + chekfile.split('/')[-1]
+    movePath = parentpath + '/data/checked/china/' + chekfile.split('/')[-2] + '/' + chekfile.split('/')[-1]
     if os.path.exists(movePath):
         os.remove(chekfile)
         return None,None
@@ -31,10 +31,10 @@ def Merge(Checkprovins,Checkfilename):
         os.remove(mergeFile)
     logfilePath=sys.argv[0].replace('Main.py','')+logFilePath[2:]
     return checkresult,logfilePath
-# if __name__ == "__main__":
-#     #Merger.checkv4_Main('MergeData_20200219.csv')
-#     #check.checkMain('MergeData_20200220_19-35-12.csv')
-#     Merge('anhui', 'anhuiCaseStatistics_20200221.xlsx')
+#if __name__ == "__main__":
+    #Merger.checkv4_Main('MergeData_20200219.csv')
+    #check.checkMain('MergeData_20200220_19-35-12.csv')
+    # Merge('anhui', 'anhuiCaseStatistics_20200221.xlsx')
 
 
 
