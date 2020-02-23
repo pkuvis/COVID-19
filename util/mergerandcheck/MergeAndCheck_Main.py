@@ -29,14 +29,16 @@ def Merge(Checkprovins,Checkfilename):
         shutil.move(chekfile, movePath)
     else:
         os.remove(mergeFile)
-    logfilePath=sys.argv[1].replace('Main.py','')+logFilePath[2:]
+    print(logFilePath)
+    logfilePath=logFilePath[2:]
+    print(logfilePath)
     return checkresult,logfilePath
 
 if __name__ == "__main__":
     #Merger.checkv4_Main('MergeData_20200219.csv')
     #check.checkMain('MergeData_20200220_19-35-12.csv')
-    #Merge('anhui', 'anhuiCaseStatistics_20200221.xlsx')
-    result, log = Merge(sys.argv[1], sys.argv[2])
+    result, log = Merge('anhui', 'anhuiCaseStatistics_20200221.xlsx')
+    # result, log = Merge(sys.argv[1], sys.argv[2])
     print(result)
     print(log)
 
