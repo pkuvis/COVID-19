@@ -29,9 +29,7 @@ def Merge(Checkprovins,Checkfilename):
         shutil.move(chekfile, movePath)
     else:
         os.remove(mergeFile)
-    print(logFilePath)
     logfilePath=logFilePath[2:]
-    print(logfilePath)
     return checkresult,logfilePath
 
 if __name__ == "__main__":
