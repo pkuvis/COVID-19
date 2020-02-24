@@ -13,7 +13,7 @@ import shutil
 #Mergetemp.csv为最新无错误的mergedata文件
 def Merge(Checkprovins,Checkfilename):
     parentpath = os.path.realpath('../../')
-    # print(parentpath)
+    #print(parentpath)
     chekfile = parentpath + '/data/unchecked/manual_collect/china/'+Checkprovins+'/'+Checkfilename
 
     movePath = parentpath + '/data/checked/china/' + chekfile.split('/')[-2] + '/' + chekfile.split('/')[-1]
@@ -29,7 +29,7 @@ def Merge(Checkprovins,Checkfilename):
         shutil.move(chekfile, movePath)
     else:
         os.remove(mergeFile)
-    logfilePath=logFilePath[2:]
+    logfilePath=os.path.realpath('.').replace('\\','/')+logFilePath[1:]
     return checkresult,logfilePath
 
 if __name__ == "__main__":
