@@ -1,0 +1,5 @@
+*.pyc
+util/mergerandcheck/completed__*.txt
+util/mergerandcheck/log_*.txt
+util/mergerandcheck/log
+util/mergerandcheck/__pycache__
