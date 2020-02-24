@@ -633,7 +633,7 @@ def checkMain(CheckFilepath,logpath='./log'):
     writeCSV(filename, err,proAll,Lables)
     #print('finished')
     if errs!=0:
-        return 'Faile',logfile
+        return 'Fail',logfile
     else:
         return 'Pass',logfile
 def CMDUse():
