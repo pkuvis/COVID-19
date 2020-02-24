@@ -309,6 +309,8 @@ def computeDay(prodicts, proLists, Lables):
         #print(prosum,csum)
         if csum==None:
             continue
+        if prosum.get(Lables[4])==None or csum.get(Lables[4])==None:
+            continue
         cerrdics[datekey] = []
         if (prosum[Lables[4]] ) != (csum[Lables[4]]):
             if csum.get('国家缺少')!=None:

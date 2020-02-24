@@ -35,7 +35,7 @@ def Merge(Checkprovins,Checkfilename):
 if __name__ == "__main__":
     #Merger.checkv4_Main('MergeData_20200219.csv')
     #check.checkMain('MergeData_20200220_19-35-12.csv')
-    result, log = Merge('anhui', 'anhuiCaseStatistics_20200221.xlsx')
+    result, log = Merge('fujian', 'fujianCaseStatistics_20200223.xlsx')
     # result, log = Merge(sys.argv[1], sys.argv[2])
     print(result)
     print(log)
