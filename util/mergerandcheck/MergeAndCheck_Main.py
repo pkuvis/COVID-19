@@ -3,6 +3,7 @@ import MergeData_Check as check
 import os
 import sys
 import shutil
+import ReadLastFilename as LastFile
 #传入参数说明：
 #Checkprovins:省份文件夹名:如安徽省,则参数为:anhui
 #Checkfilename:为上传文件名:如：anhuiCaseStatistics_20200219.xlsx
@@ -20,12 +21,18 @@ def Merge(Checkprovins,Checkfilename):
     if os.path.exists(movePath):
         os.remove(chekfile)
         return None,None
-    mergeFile=Merger.checkv4_Main('Mergetemp.csv',chekfile)
+    LastFilename,checknum=LastFile.ReadLastFileName()
+    #print(LastFilename)
+    mergeFile=Merger.checkv4_Main(LastFilename,chekfile)
 
     checkresult,logFilePath=check.checkMain(mergeFile)
     if checkresult=='Pass':
-        os.remove('Mergetemp.csv')
-        os.rename(mergeFile,'Mergetemp.csv')
+        if checknum!=0:
+            os.remove(LastFilename)
+        checknum+=1
+        checknum%=35
+        #os.rename(mergeFile,'Mergetemp.csv')
+        LastFile.WriteLastFileName(mergeFile,checknum)
         shutil.move(chekfile, movePath)
     else:
         os.remove(mergeFile)
@@ -35,7 +42,7 @@ def Merge(Checkprovins,Checkfilename):
 if __name__ == "__main__":
     #Merger.checkv4_Main('MergeData_20200219.csv')
     #check.checkMain('MergeData_20200220_19-35-12.csv')
-    result, log = Merge('fujian', 'fujianCaseStatistics_20200223.xlsx')
+    result, log = Merge('anhui', 'anhuiCaseStatistics_20200224.xlsx')
     # result, log = Merge(sys.argv[1], sys.argv[2])
     print(result)
     print(log)

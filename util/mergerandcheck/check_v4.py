@@ -19,8 +19,9 @@ daily_data=['新增确诊人数','新增疑似人数','新增治愈人数','新�
 old_colums=['公开时间','类别','省份','城市','新增确诊病例','新增治愈出院数','新增死亡数','核减','治愈核减','死亡核减','累计确诊人数','累计治愈人数','累计死亡人数']
 
 time_today=datetime.datetime.now().strftime('%Y%m%d')
+time_Nowhour=datetime.datetime.now().strftime('%H-%M-%S')
 time_yesterday=(datetime.datetime.now()-datetime.timedelta(days=1)).strftime('%Y%m%d')
-outputfile='MergeData_'+time_today+'.csv'
+outputfile='MergeData_'+time_today+'_'+time_Nowhour+'.csv'
 log_file='log_'+time_today+'.txt'
 log_yes_file='log_'+time_yesterday+'.txt'
 completed_file='completed_'+time_today+'.txt'
