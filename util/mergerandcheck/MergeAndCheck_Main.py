@@ -23,9 +23,14 @@ def Merge(Checkprovins,Checkfilename):
         return None,None
     LastFilename,checknum=LastFile.ReadLastFileName()
     #print(LastFilename)
-    mergeFile=Merger.checkv4_Main(LastFilename,chekfile)
+    mergeFile,merge_result=Merger.checkv4_Main(LastFilename,chekfile)
 
     checkresult,logFilePath=check.checkMain(mergeFile)
+    if merge_result!='1':
+        checkresult='Faile'
+        logFilePath='/'+merge_result
+	return checkresult,logfilePath
+
     if checkresult=='Pass':
         if checknum!=0:
             os.remove(LastFilename)
@@ -42,7 +47,7 @@ def Merge(Checkprovins,Checkfilename):
 if __name__ == "__main__":
     #Merger.checkv4_Main('MergeData_20200219.csv')
     #check.checkMain('MergeData_20200220_19-35-12.csv')
-    result, log = Merge('anhui', 'anhuiCaseStatistics_20200224.xlsx')
+    result, log = Merge('hubei', 'hubeiCaseStatistics_20200228.xlsx')
     # result, log = Merge(sys.argv[1], sys.argv[2])
     print(result)
     print(log)
