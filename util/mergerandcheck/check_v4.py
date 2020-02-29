@@ -177,7 +177,6 @@ def exchangetooldcol(data):
                 if temp_data[colums[i-5]]!=temp_data[colums[i-5]]:
                     temp_data.loc[colums[i-5]]=''
 
-            print(temp_data[colums[2]])
             date=''
             temp_date=str(temp_data[colums[2]])
             if '/' in temp_date:
