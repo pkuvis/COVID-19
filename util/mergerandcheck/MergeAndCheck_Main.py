@@ -29,7 +29,8 @@ def Merge(Checkprovins,Checkfilename):
     if merge_result!='1':
         checkresult='Faile'
         logFilePath='/'+merge_result
-	return checkresult,logfilePath
+        logfilePath=os.path.realpath('.').replace('\\','/')+logFilePath
+        return checkresult,logfilePath
 
     if checkresult=='Pass':
         if checknum!=0:
