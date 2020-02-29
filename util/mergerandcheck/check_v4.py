@@ -111,14 +111,14 @@ def entoch(charter,province):
         month=charter.month
         day=charter.day
         day=day+1
-        if day==31:
+        if day==32:
             month=str(1+month)
             day=1
-        elif day==30:
+        elif day==31:
             if month in days_2:
                 month=str(1+month)
                 day=1
-        elif day==29 or day==28:
+        elif day==30:
             if month==2:
                 month=str(1+month)
                 day=1
@@ -471,7 +471,15 @@ def check_xlsx_data(file):
         if time_yesterday in file:
             data=pd.read_excel(file,encoding='utf_8_sig')
             daily=exchangetooldcol(data)
-
+            if daily==1:
+                judge_data=data.copy()
+                merge_result=log_file
+                out_info='{}文件格式存在问题'.format(judge_data.iloc[2,5])
+                with open(log_file,"w",encoding='utf_8_sig') as log:
+                    log.write(time_today+'_'+time_Nowhour+'\n')
+                    log.write('异常原因:'+out_info+'\n')
+                    log.write(file+'\n')
+                return merge_result
             data=pd.DataFrame(daily)
             data.to_csv(outputfile, mode='a',index=False, header=False,encoding='utf_8_sig')
 
