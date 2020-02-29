@@ -589,7 +589,7 @@ def writeHead(filename,checkname,checktime,errs,warnings):
     if errs==0:
         fp.write('Pass\n\n')
     else:
-        fp.write('Faile\n\n')
+        fp.write('Fail\n\n')
     fp.write('2. Check Summary\n')
     fp.write(' Checked file name:'+checkname+'\n')
     fp.write(' Check time:'+checktime+'\n')
