@@ -111,6 +111,7 @@ def entoch(charter,province):
         month=charter.month
         day=charter.day
         day=day+1
+        '''
         if day==31:
             month=str(1+month)
             day=1
@@ -118,10 +119,11 @@ def entoch(charter,province):
             if month in days_2:
                 month=str(1+month)
                 day=1
-        elif day==29 or day==28:
+        elif day==29:
             if month==2:
                 month=str(1+month)
                 day=1
+        '''
         ch_result=str(month)+'月'+str(day)+'日'
         #print(ch_result)
     else:
@@ -176,11 +178,17 @@ def exchangetooldcol(data):
                     temp_data.loc[colums[i-5]]=''
 
             date=''
-            try:
-                temp_date=str(temp_data[colums[2]])
-                date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d %H:%M:%S')
-            except Exception as e:
-                date=datetime.datetime.strptime(str(temp_data[colums[2]]).split('\r')[0],'%Y-%m-%d')
+            temp_date=str(temp_data[colums[2]])
+            if '/' in temp_date:
+                try: 
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y/%m/%d %H:%M:%S')
+                except Exception as e:
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y/%m/%d')
+            else:
+                try: 
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d %H:%M:%S')
+                except Exception as e:
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d')
             date=entoch(date,temp_data['省份'])
 
             if temp_data[1]=='省级':
@@ -222,10 +230,17 @@ def exchangetooldcol(data):
             temp_data.loc['省份']=newname.get_pure_province_name(temp_data['省份'])
             temp_data.loc['城市']=newname.get_pure_city_name(temp_data['城市'])
             date=''
-            try:
-                date=datetime.datetime.strptime(str(temp_data[colums[2]]).split('\r')[0],'%Y-%m-%d %H:%M:%S')
-            except Exception as e:
-                date=datetime.datetime.strptime(str(temp_data[colums[2]]).split('\r')[0],'%Y-%m-%d')
+            temp_date=str(temp_data[colums[2]])
+            if '/' in temp_date:
+                try: 
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y/%m/%d %H:%M:%S')
+                except Exception as e:
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y/%m/%d')
+            else:
+                try: 
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d %H:%M:%S')
+                except Exception as e:
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d')
             date=entoch(date,temp_data['省份'])
 
             #start_time.append(str(temp_data[colums[2]]))
@@ -402,7 +417,7 @@ def add_last_data(file):
     except Exception as e:
         #print(e)
         #print(file)
-        with open(log_file,"a",encoding='utf_8_sig') as log:
+        with open(log_file,"w",encoding='utf_8_sig') as log:
             log.write('异常原因:'+str(e)+'\n')
             log.write(file+'\n')
 
@@ -442,6 +457,7 @@ def xlsx_to_csv(file):
 def check_xlsx_data(file):
     file_list=[]
     dir_list=[]
+    merge_result='1'
     #get_file_path(root_path,file_list,dir_list)
     sys_str=platform.system()
     flag=''
@@ -456,23 +472,35 @@ def check_xlsx_data(file):
         if time_yesterday in file:
             data=pd.read_excel(file,encoding='utf_8_sig')
             daily=exchangetooldcol(data)
-
+            if daily==1:
+                judge_data=data.copy()
+                merge_result=log_file
+                out_info='{}文件格式存在问题'.format(judge_data.iloc[2,5])
+                with open(log_file,"w",encoding='utf_8_sig') as log:
+                    log.write(time_today+'_'+time_Nowhour+'\n')
+                    log.write('异常原因:'+out_info+'\n')
+                return merge_result
             data=pd.DataFrame(daily)
             data.to_csv(outputfile, mode='a',index=False, header=False,encoding='utf_8_sig')
 
         with open(completed_file,"a",encoding='utf_8_sig') as com:
             com.write(file+'\n')
         #print('end check')
+        '''
         with open(log_file,"a",encoding='utf_8_sig') as log:
             for log_info in is_error_data:
                 log.write(log_info+'\n')
-        
+        '''
     except Exception as e:
         #print('异常原因:',e)
         #print(file)
-        with open(log_file,"a",encoding='utf_8_sig') as log:
+        merge_result=log_file
+        with open(log_file,"w",encoding='utf_8_sig') as log:
+            log.write(time_today+'_'+time_Nowhour+'\n')
             log.write('异常原因:'+str(e)+'\n')
             log.write(file+'\n')
+
+    return merge_result
 
 '''
 mergeDataFile:前日所生成的合并文件
@@ -511,7 +539,7 @@ def checkv4_Main(mergeDataFile,data_dir):
     func:校验今日所上传的数据文件,将当日上传文件中的数据合并至MergeData_date.csv中
     para:上传数据的完整目录文件名,如../../data/
     '''
-    check_xlsx_data(data_dir)
+    merge_result=check_xlsx_data(data_dir)
 
-    return outputfile
+    return outputfile,merge_result
     #check.checkMain(outputfile,'./log')
