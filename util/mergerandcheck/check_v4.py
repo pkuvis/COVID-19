@@ -111,19 +111,19 @@ def entoch(charter,province):
         month=charter.month
         day=charter.day
         day=day+1
-        '''
-        if day==31:
+        
+        if day==32:
             month=str(1+month)
             day=1
-        elif day==30:
+        elif day==31:
             if month in days_2:
                 month=str(1+month)
                 day=1
-        elif day==29:
+        elif day==30:
             if month==2:
                 month=str(1+month)
                 day=1
-        '''
+        
         ch_result=str(month)+'月'+str(day)+'日'
         #print(ch_result)
     else:

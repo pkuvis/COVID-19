@@ -12,8 +12,8 @@ def get_pure_province_name(province_name):
     if province_name in name_old_to_new:
         province_name = name_old_to_new[province_name]
     else:
-        if province_name not in name_new_to_old:
-            print("*** not found province", province_name)
+        #if province_name not in name_new_to_old:
+        #    print("*** not found province", province_name)
         # else:
         #     print("*** found new", province_name, "old is", name_new_to_old[province_name])
         province_name = province_name.replace("省", "")
@@ -28,11 +28,11 @@ def get_pure_province_name(province_name):
 def get_pure_city_name(city_name):
     if city_name in name_old_to_new:
         city_name = name_old_to_new[city_name]
-        if city_name.find("市") != -1:
-            print("*** find 市", city_name)
+        #if city_name.find("市") != -1:
+        #    print("*** find 市", city_name)
     else:
-        if city_name not in name_new_to_old:
-            print("*** not found city", city_name)
+        #if city_name not in name_new_to_old:
+        #    print("*** not found city", city_name)
         # else:
         #     print("*** found new", city_name, "old is", name_new_to_old[city_name])
         city_name = city_name.replace("市", "")
