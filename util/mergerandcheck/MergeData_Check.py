@@ -23,6 +23,7 @@ def readFile(filepath):
 def citydict(Lables,data):
     cerr=[]
     warning=[]
+    warning2=[]
     cerrnum=0
     warningnum=0
     prodic = {}
@@ -87,13 +88,21 @@ def citydict(Lables,data):
                                                                Lables[10]:cday_data[Lables[10]]}}}})
                 if last[Lables[5]]!=int(cday_data[Lables[11]]):
                     warningnum+=1
-                    warning.append({cday_data[Lables[0]]: {pk: {ck: {Lables[5]: last[Lables[5]],
+                    if pk=='福建' or pk=='湖北' or pk=='陕西' or pk=='北京'or pk=='河南'or pk=='广东':
+                        warning2.append({cday_data[Lables[0]]: {pk: {ck: {Lables[5]: last[Lables[5]],
+                                                                  Lables[11]: cday_data[Lables[11]]}}}})
+                    else:
+                        warning.append({cday_data[Lables[0]]: {pk: {ck: {Lables[5]: last[Lables[5]],
                                                                   Lables[11]: cday_data[Lables[11]]}}}})
                 if last[Lables[6]]!=int(cday_data[Lables[12]]):
                     warningnum += 1
-                    warning.append({cday_data[Lables[0]]: {pk: {ck: {Lables[6]: last[Lables[6]],
+                    if pk=='福建' or pk=='湖北' or pk=='陕西' or pk=='北京'or pk=='河南'or pk=='广东' or  pk=='上海':
+                        warning2.append({cday_data[Lables[0]]: {pk: {ck: {Lables[6]: last[Lables[6]],
                                                                   Lables[12]: cday_data[Lables[12]]}}}})
-    return cerr,cerrnum,warning,warningnum
+                    else:
+                        warning.append({cday_data[Lables[0]]: {pk: {ck: {Lables[6]: last[Lables[6]],
+                                                                  Lables[12]: cday_data[Lables[12]]}}}})
+    return cerr,cerrnum,warning,warningnum,warning2
 def writeCerr(filename,cerr):
     fp = open(filename, "a+", encoding="utf-8")
     fp.write("---------不符合规则:地区级复核，地区级当日之前的新增累加值 == 卫健委发布的当日累计值---------\n")
@@ -115,6 +124,27 @@ def writeCerr(filename,cerr):
         fp.write(wstr+'\n')
     fp.write('\n')
 def writeCwarning(filename,cerr):
+    fp = open(filename, "a+", encoding="utf-8")
+    fp.write('4. Warning -- Follow-Up Needed\n')
+    fp.write("---------不符合规则:地区级复核，地区级当日之前的新增累加值 == 卫健委发布的当日累计值---------\n")
+    for e in cerr:
+        dates=list(e.keys())[0]
+        g = dates.split('月')
+
+        g[1] = g[1].split('日')[0]
+        # print(g)
+        if int(g[0]) < 2:
+            continue
+        elif int(g[0]) >= 2 and int(g[1]) < 16:
+            continue
+        pk=list(e.get(dates).keys())[0]
+        ck=list(e.get(dates).get(pk).keys())[0]
+        errs=e.get(dates).get(pk).get(ck)
+        erk=list(errs.keys())
+        wstr=dates+','+pk+','+ck+','+erk[0][2:4]+',地区级累加值为'+str(errs.get(erk[0]))+',卫健委累计值'+str(errs.get(erk[1]))
+        fp.write(wstr+'\n')
+    fp.write('\n')
+def writeCwarning2(filename,cerr):
     fp = open(filename, "a+", encoding="utf-8")
     fp.write("---------不符合规则:地区级复核，地区级当日之前的新增累加值 == 卫健委发布的当日累计值---------\n")
     for e in cerr:
@@ -510,7 +540,7 @@ def write2(filename,err):
 
 def write3(filename,cerrdics,dateList):
     fp = open(filename, "a+", encoding="utf-8")
-    fp.write('4. Warning Report\n')
+    fp.write('5. Warning -- No Action Needed\n')
     fp.write('-----不符合规则：全国级复核，各省每日新增累加值 == 国家级当日累计值-----------------\n')
     for datekey in dateList:
         wstr = '';
@@ -583,11 +613,14 @@ def writeCSV(filename,err,proAll,Lables):
                             str(s.get(Lables[12])) + ',否'
                     fp.write(wstr+'\n')
     fp.close()
-def writeHead(filename,checkname,checktime,errs,warnings):
+def writeHead(filename,checkname,checktime,errs,warnings,cwarning):
     fp = open(filename, "a+", encoding="utf-8")
     fp.write('1. Check Result\n')
     if errs==0:
-        fp.write('Pass\n\n')
+        fp.write('Success\n\n')
+        if len(cwarning)!=0:
+
+            fp.write('但是，存在地区级治愈和死亡存在不一致，见第4项，需要补录或改正！\n\n')
     else:
         fp.write('Fail\n\n')
     fp.write('2. Check Summary\n')
@@ -607,7 +640,7 @@ def checkMain(CheckFilepath,logpath='./log'):
     perrdics, cerrdics, compdics ,dayErr,cdayWarning= computeDay(prodicts, proList, Lables)
     #print(cerrdics)
     err,proAll,SumErr= computedS(dateList, compdics, proList, Lables)
-    cerr ,cerrnum,cwarning,cwarningnum= citydict(Lables, data)
+    cerr ,cerrnum,cwarning,cwarningnum,cwarning2= citydict(Lables, data)
 
 
 
@@ -621,14 +654,18 @@ def checkMain(CheckFilepath,logpath='./log'):
     pathlib.Path(logpath).mkdir(parents=True, exist_ok=True)
     filename = logpath+'/' + checkname.split('.')[0] + '_CheckReport' + checktime + '.log'
     logfile=filename
-    writeHead(filename, checkname, checktime, errs, warnings)
+    writeHead(filename, checkname, checktime, errs, warnings,cwarning)
     write1(filename, perrdics, dateList)
     write2(filename, err)
 
     writeCerr(filename, cerr)
 
+    writeCwarning(filename, cwarning)
+
     write3(filename, cerrdics, dateList)
-    writeCwarning(filename,cwarning)
+
+    writeCwarning2(filename, cwarning2)
+
     filename = logpath+'/' + checkname.split('.')[0] + '_AcummulatedValueCheckResult'+ checktime +'.csv'
     #print(filename)
     #print(proAll)
@@ -642,9 +679,9 @@ def CMDUse():
     filePath=sys.argv[1]
     sys.exit(checkMain(filePath))
 if __name__ == '__main__':
-    # CheckFilepath = './Mergerdata/MergeData_20200217.csv'
-    # print(checkMain(CheckFilepath))
-    CMDUse()
+    CheckFilepath = 'Mergetemp.csv'
+    print(checkMain(CheckFilepath))
+    # CMDUse()
     # filename = './Mergerdata/MergeData_20200216(3).csv'
     #
     # Lables, data = readFile(filename)
