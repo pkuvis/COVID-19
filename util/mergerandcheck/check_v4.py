@@ -351,6 +351,9 @@ def check_xlsx_data(file):
             data=pd.DataFrame(daily)
             data.to_csv(outputfile, mode='a',index=False, header=False,encoding='utf_8_sig')
         
+        with open(completed_file,"a",encoding='utf_8_sig') as com:
+            com.write(file+'\n')
+        
     except Exception as e:
         #print('异常原因:',e)
         #print(file)
@@ -374,7 +377,7 @@ def checkv4_Main(mergeDataFile,data_dir):
             csv_write = csv.writer(f)
             csv_head = old_colums
             csv_write.writerow(csv_head)
-    
+
     if os.path.exists(yes_completed_file):
         os.remove(yes_completed_file)
     if os.path.exists(log_yes_file):
@@ -402,6 +405,6 @@ def checkv4_Main(mergeDataFile,data_dir):
 
     return outputfile,merge_result
 
-if __name__ == "__main__":
-    out_file,result = checkv4_Main('MergeData_20200304_16-43-26.csv','../tempdata/fujianCaseStatistics_20200303.xlsx')
-    print(result)
+#if __name__ == "__main__":
+#    out_file,result = checkv4_Main('MergeData_20200304_16-43-26.csv','../tempdata/fujianCaseStatistics_20200303.xlsx')
+#    print(result)
