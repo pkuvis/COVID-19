@@ -18,4 +18,4 @@ if __name__ == '__main__':
         check_result, log_file_name = Merge(province, file_name)
         print("%s|log_path:%s" % (check_result, log_file_name))
     except Exception as e:
-        print("Fail|%s" % str(e))
+        print("Faile|%s" % str(e))

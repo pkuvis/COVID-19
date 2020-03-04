@@ -19,7 +19,7 @@ def Merge(Checkprovins,Checkfilename):
 
     movePath = parentpath + '/data/checked/china/' + chekfile.split('/')[-2] + '/' + chekfile.split('/')[-1]
     if os.path.exists(movePath):
-        os.remove(chekfile)
+        # os.remove(chekfile)
         return None,None
     LastFilename,checknum=LastFile.ReadLastFileName()
     #print(LastFilename)
@@ -33,13 +33,13 @@ def Merge(Checkprovins,Checkfilename):
         return checkresult,logfilePath
 
     if checkresult=='Pass':
-        if checknum!=0:
-            os.remove(LastFilename)
+        # if checknum!=0:
+        #     os.remove(LastFilename)
         checknum+=1
         checknum%=35
         #os.rename(mergeFile,'Mergetemp.csv')
         LastFile.WriteLastFileName(mergeFile,checknum)
-        shutil.move(chekfile, movePath)
+        # shutil.move(chekfile, movePath)
     else:
         os.remove(mergeFile)
     logfilePath=os.path.realpath('.').replace('\\','/')+logFilePath[1:]
