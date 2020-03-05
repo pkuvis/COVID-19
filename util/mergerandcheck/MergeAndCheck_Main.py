@@ -45,10 +45,10 @@ def Merge(Checkprovins,Checkfilename):
     logfilePath=os.path.realpath('.').replace('\\','/')+logFilePath[1:]
     return checkresult,logfilePath
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
     #Merger.checkv4_Main('MergeData_20200219.csv')
     #check.checkMain('MergeData_20200220_19-35-12.csv')
-    result, log = Merge('hubei', 'hubeiCaseStatistics_20200228.xlsx')
+    #result, log = Merge('hubei', 'hubeiCaseStatistics_20200228.xlsx')
     # result, log = Merge(sys.argv[1], sys.argv[2])
-    print(result)
-    print(log)
+    #print(result)
+    #print(log)

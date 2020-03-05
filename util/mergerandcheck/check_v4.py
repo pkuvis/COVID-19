@@ -28,82 +28,6 @@ completed_file='completed_'+time_today+'.txt'
 yes_completed_file='completed_'+time_yesterday+'.txt'
 Completed=[]
 
-def check_error_data(data):
-    re_value=0
-    data_shape=data.shape[0]
-    province_daily_data=[0,0,0,0,0,0,0,0,0,0]
-    province_total_data=[0,0,0,0,0,0,0,0,0,0]
-    for row in range(0,data_shape):
-        temp_data=data.iloc[row,:].copy()
-        if temp_data[1]=='省级' or temp_data[1]=='国家级':
-
-            for i in range(0,10):
-                if temp_data[daily_data[i]]!=temp_data[daily_data[i]]:
-                    temp_data.loc[daily_data[i]]=0
-            
-            province_total_data[0]=int(temp_data[daily_data[0]])
-            province_total_data[1]=int(temp_data[daily_data[1]])
-            province_total_data[2]=int(temp_data[daily_data[2]])
-            province_total_data[3]=int(temp_data[daily_data[3]])
-            province_total_data[4]=int(temp_data[daily_data[4]])
-            province_total_data[5]=int(temp_data[daily_data[5]])
-            province_total_data[6]=int(temp_data[daily_data[6]])
-            province_total_data[7]=int(temp_data[daily_data[7]])
-            province_total_data[8]=int(temp_data[daily_data[8]])
-            province_total_data[9]=int(temp_data[daily_data[9]])
-        elif temp_data['统计级别']=='城市级':
-
-            for i in range(0,10):
-                if temp_data[daily_data[i]]!=temp_data[daily_data[i]]:
-                    temp_data.loc[daily_data[i]]=0
-                    
-            province_daily_data[0]+=int(temp_data[daily_data[0]])
-            province_daily_data[1]+=int(temp_data[daily_data[1]])
-            province_daily_data[2]+=int(temp_data[daily_data[2]])
-            province_daily_data[3]+=int(temp_data[daily_data[3]])
-            province_daily_data[4]+=int(temp_data[daily_data[4]])
-            province_daily_data[5]+=int(temp_data[daily_data[5]])
-            province_daily_data[6]+=int(temp_data[daily_data[6]])
-            province_daily_data[7]+=int(temp_data[daily_data[7]])
-            province_daily_data[8]+=int(temp_data[daily_data[8]])
-            province_daily_data[9]+=int(temp_data[daily_data[9]])
-
-    for i in range(0,10):
-        current_value=province_total_data[i]-province_daily_data[i]
-        if current_value!=0:
-            if data_shape==1:
-                break
-            out_info='{} 起始{}结束{}的数据{}为{}，地区累计数据为{}'.format(temp_data[5],temp_data[2],temp_data[3],daily_data[i],province_total_data[i],province_daily_data[i])
-            #print(out_info)
-            is_error_data.append(out_info)
-            re_value=1
-
-    #print(is_error_data)
-    #print(province_daily_data,province_total_data)
-    return re_value
-
-def check_null_data(data):
-    data_shape=data.shape[0]
-    for row in range(0,data_shape):
-        temp_data=data.iloc[row,:]
-        nan_result=temp_data.isnull().values.any()
-        nan_value=temp_data.isna().sum()
-        if nan_result==True:
-            if temp_data[39]=='' and nan_value==1:
-                continue
-            if temp_data[1]=='省级':
-
-                if np.isnan(temp_data[7]):
-                    if isinstance(temp_data[6],float):
-                        nan_value-=3
-                        out_info='第{}行 {}有{}处未填数据'.format(row+2,temp_data[5],nan_value)
-                    else:
-                        nan_value-=2
-                        #省级地区数据中“区县”、“备注”可留空
-                        out_info='第{}行 {}{}有未填{}处未填数据'.format(row+2,temp_data[5],temp_data[6],nan_value)
-                is_null_data.append(out_info)
-    return 0
-
 def entoch(charter,province):
     ch_result=''
     if '甘肃' in province:
@@ -111,14 +35,14 @@ def entoch(charter,province):
         month=charter.month
         day=charter.day
         day=day+1
-        if day==31:
+        if day==32:
             month=str(1+month)
             day=1
-        elif day==30:
+        elif day==31:
             if month in days_2:
                 month=str(1+month)
                 day=1
-        elif day==29 or day==28:
+        elif day==30:
             if month==2:
                 month=str(1+month)
                 day=1
@@ -178,11 +102,17 @@ def exchangetooldcol(data):
                     temp_data.loc[colums[i-5]]=''
 
             date=''
-            try:
-                temp_date=str(temp_data[colums[2]])
-                date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d %H:%M:%S')
-            except Exception as e:
-                date=datetime.datetime.strptime(str(temp_data[colums[2]]).split('\r')[0],'%Y-%m-%d')
+            temp_date=str(temp_data[colums[2]])
+            if '/' in temp_date:
+                try: 
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y/%m/%d %H:%M:%S')
+                except Exception as e:
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y/%m/%d')
+            else:
+                try: 
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d %H:%M:%S')
+                except Exception as e:
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d')
 
             date_today=datetime.datetime.now()
             if date_today.month!=date.month and (date_today.day-1)!=date.day:
@@ -232,10 +162,17 @@ def exchangetooldcol(data):
             temp_data.loc['省份']=newname.get_pure_province_name(temp_data['省份'])
             temp_data.loc['城市']=newname.get_pure_city_name(temp_data['城市'])
             date=''
-            try:
-                date=datetime.datetime.strptime(str(temp_data[colums[2]]).split('\r')[0],'%Y-%m-%d %H:%M:%S')
-            except Exception as e:
-                date=datetime.datetime.strptime(str(temp_data[colums[2]]).split('\r')[0],'%Y-%m-%d')
+            temp_date=str(temp_data[colums[2]])
+            if '/' in temp_date:
+                try: 
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y/%m/%d %H:%M:%S')
+                except Exception as e:
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y/%m/%d')
+            else:
+                try: 
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d %H:%M:%S')
+                except Exception as e:
+                    date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d')
 
             date_today=datetime.datetime.now()
             if date_today.month!=date.month and (date_today.day-1)!=date.day:
@@ -296,28 +233,6 @@ def exchangetooldcol(data):
         '累计死亡人数':sum_die
     }
     return daily
-
-def time_transfer(date):
-    days_2=['4','6','9','11']
-    month=date.split('月')[0]
-    day=date.split('月')[1].split('日')[0]
-    day_end=str(int(day)+1)
-    month_end=month
-
-    if day=='31':
-        month_end=str(1+int(month))
-        day_end='1'
-    elif day=='30':
-        if month in days_2:
-            month_end=str(1+int(month))
-            day_end='1'
-    elif day=='29':
-        if month=='2':
-            month_end=str(1+int(month))
-            day_end='1'
-    start_time='2020/'+month+'/'+day+' 00:00'
-    end_time='2020/'+month_end+'/'+day_end+' 00:00'
-    return start_time,end_time
 
 def get_file_path(root_path,file_list,dir_list):   
     #获取该目录下所有的文件名称和目录名称    
@@ -399,17 +314,6 @@ def check_last_data(data):
         
     return daily
 
-def date_ex(data):
-    data_shape=data.shape[0]
-    for row in range(0,data_shape):
-        temp_data=data.iloc[row,:].copy()
-        tuple_time=xldate_as_tuple(int(temp_data['公开时间']),0)
-        untrans_date=datetime.datetime(*tuple_time)
-        if temp_data['类别']=='地区级':
-            data.loc[row,'类别']='城市级'
-        data.loc[row,'公开时间']=entoch(untrans_date)
-    return data
-
 def add_last_data(file):
     try:
         data=pd.read_csv(file,error_bad_lines=False)
@@ -420,47 +324,15 @@ def add_last_data(file):
     except Exception as e:
         #print(e)
         #print(file)
-        with open(log_file,"a",encoding='utf_8_sig') as log:
+        with open(log_file,"w",encoding='utf_8_sig') as log:
             log.write('异常原因:'+str(e)+'\n')
             log.write(file+'\n')
-
-def check_all_data():
-    file_list=[]
-    dir_list=[]
-    root_path='./china'
-    get_file_path(root_path,file_list,dir_list)
-    i=0
-    for file in file_list:
-        try:
-            data=pd.read_csv(file,error_bad_lines=False)
-            check_null_data(data)
-            check_error_data(data)
-            daily=exchangetooldcol(data)
-            data=pd.DataFrame(daily)
-            data.to_csv(outputfile, mode='a',index=False, header=False,encoding='utf_8_sig')
-
-        except Exception as e:
-            print(e)
-            print(file)
-
-    with open(log_file,"a",encoding='utf_8_sig') as log:
-        for log_info in is_error_data:
-            log.write(log_info+'\n')
-        log.write('\n*******************************\n\n')
-        for log_info in is_null_data:
-            log.write(log_info+'\n')
-
-def xlsx_to_csv(file):
-    ex=pd.read_excel(file,encoding='utf_8_sig')
-    file_name=file.split('.')[0]
-    ex=date_ex(ex)
-    return ex
 
 #def check_xlsx_data(root_path):
 def check_xlsx_data(file):
     file_list=[]
     dir_list=[]
-    #get_file_path(root_path,file_list,dir_list)
+    merge_result='1'
     sys_str=platform.system()
     flag=''
     if sys_str=='Windows' or sys_str=='windows':
@@ -470,27 +342,27 @@ def check_xlsx_data(file):
 
     try:
         #for file in file_list:
-
         if time_yesterday in file:
             data=pd.read_excel(file,encoding='utf_8_sig')
             daily=exchangetooldcol(data)
-
+            if daily==1:
+                merge_result=log_file
+                return merge_result
             data=pd.DataFrame(daily)
             data.to_csv(outputfile, mode='a',index=False, header=False,encoding='utf_8_sig')
-
+        
         with open(completed_file,"a",encoding='utf_8_sig') as com:
             com.write(file+'\n')
-        #print('end check')
-        with open(log_file,"a",encoding='utf_8_sig') as log:
-            for log_info in is_error_data:
-                log.write(log_info+'\n')
         
     except Exception as e:
         #print('异常原因:',e)
         #print(file)
-        with open(log_file,"a",encoding='utf_8_sig') as log:
+        merge_result=log_file
+        with open(log_file,"w",encoding='utf_8_sig') as log:
             log.write('异常原因:'+str(e)+'\n')
             log.write(file+'\n')
+
+    return merge_result
 
 '''
 mergeDataFile:前日所生成的合并文件
@@ -505,7 +377,7 @@ def checkv4_Main(mergeDataFile,data_dir):
             csv_write = csv.writer(f)
             csv_head = old_colums
             csv_write.writerow(csv_head)
-    
+
     if os.path.exists(yes_completed_file):
         os.remove(yes_completed_file)
     if os.path.exists(log_yes_file):
@@ -529,9 +401,10 @@ def checkv4_Main(mergeDataFile,data_dir):
     func:校验今日所上传的数据文件,将当日上传文件中的数据合并至MergeData_date.csv中
     para:上传数据的完整目录文件名,如../../data/
     '''
-    check_xlsx_data(data_dir)
+    merge_result = check_xlsx_data(data_dir)
 
-    return outputfile
+    return outputfile,merge_result
 
-if __name__ == "__main__":
-    check.checkMain('merge_withCuredUpdate7.csv','./log')
+#if __name__ == "__main__":
+#    out_file,result = checkv4_Main('MergeData_20200304_16-43-26.csv','../tempdata/fujianCaseStatistics_20200303.xlsx')
+#    print(result)
