@@ -47,7 +47,6 @@ def entoch(charter,province):
                 month=str(1+month)
                 day=1
         ch_result=str(month)+'月'+str(day)+'日'
-        #print(ch_result)
     else:
         ch_result=str(charter.month)+'月'+str(charter.day)+'日'
     return ch_result
@@ -114,22 +113,21 @@ def exchangetooldcol(data):
                 except Exception as e:
                     date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d')
 
+            date_ex=entoch(date,temp_data['省份'])
+            
             date_today=datetime.datetime.now()
-            if date_today.month==date.month and (date_today.day-1)!=date.day:
+            judge_date=str(date_today.month)+'月'+str(date_today.day-1)+'日'
+            if date_ex!=judge_date:
                 err_info='文件日期不符'
                 with open(log_file,"w",encoding='utf_8_sig') as log:
                     log.write('异常原因:'+err_info+'\n')
                 return 1
 
-            date=entoch(date,temp_data['省份'])
-
             if temp_data[1]=='省级':
                 temp_data.loc['省份']=newname.get_pure_province_name(temp_data['省份'])
             
             if '新疆' in temp_data['省份']:
-                #temp_data.loc['省份']=newname.get_pure_province_name(temp_data['省份'])
                 for i in range(0,10):
-                    #if temp_data[daily_data[i]]!=temp_data[daily_data[i]]:
                     if temp_data[daily_data[i]]=='':
                         temp_data.loc[daily_data[i]]=0
                 for count in range(0,10):
@@ -137,7 +135,7 @@ def exchangetooldcol(data):
                 for count_ in range(0,10):
                     temp_data.loc[daily_data[count_]]=data_xinjiang[count_] 
 
-            data_1=date
+            data_1=date_ex
             #data_time_1=str(temp_data[colums[2]])
             #data_time_2=str(temp_data[colums[3]])
             data_2=str(temp_data[colums[1]])
@@ -174,18 +172,19 @@ def exchangetooldcol(data):
                 except Exception as e:
                     date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d')
 
+            date_ex=entoch(date,temp_data['省份'])
+
             date_today=datetime.datetime.now()
-            if date_today.month==date.month and (date_today.day-1)!=date.day:
+            judge_date=str(date_today.month)+'月'+str(date_today.day-1)+'日'
+            if date_ex!=judge_date:
                 err_info='文件日期不符'
                 with open(log_file,"w",encoding='utf_8_sig') as log:
                     log.write('异常原因:'+err_info+'\n')
                 return 1
 
-            date=entoch(date,temp_data['省份'])
-
             #start_time.append(str(temp_data[colums[2]]))
             #end_time.append(str(temp_data[colums[3]]))
-            Diagnosed_time.append(date)
+            Diagnosed_time.append(date_ex)
             type.append(str(temp_data[colums[1]]))
             province.append(str(temp_data[colums[5]]))
             city.append(str(temp_data[colums[6]]))
@@ -406,5 +405,5 @@ def checkv4_Main(mergeDataFile,data_dir):
     return outputfile,merge_result
 
 #if __name__ == "__main__":
-#    out_file,result = checkv4_Main('MergeData_20200304_16-43-26.csv','../tempdata/fujianCaseStatistics_20200303.xlsx')
+#    out_file,result = checkv4_Main('MergeData_20200307_10-59-59.csv','../tempdata/gansuCaseStatistics_20200306.xlsx')
 #    print(result)
