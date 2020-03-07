@@ -115,7 +115,7 @@ def exchangetooldcol(data):
                     date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d')
 
             date_today=datetime.datetime.now()
-            if date_today.month!=date.month and (date_today.day-1)!=date.day:
+            if date_today.month==date.month and (date_today.day-1)!=date.day:
                 err_info='文件日期不符'
                 with open(log_file,"w",encoding='utf_8_sig') as log:
                     log.write('异常原因:'+err_info+'\n')
@@ -175,7 +175,7 @@ def exchangetooldcol(data):
                     date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y-%m-%d')
 
             date_today=datetime.datetime.now()
-            if date_today.month!=date.month and (date_today.day-1)!=date.day:
+            if date_today.month==date.month and (date_today.day-1)!=date.day:
                 err_info='文件日期不符'
                 with open(log_file,"w",encoding='utf_8_sig') as log:
                     log.write('异常原因:'+err_info+'\n')
