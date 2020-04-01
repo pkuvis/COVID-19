@@ -31,7 +31,7 @@ def citydict(Lables,data):
         List = re.split(',|\\t', Len)
         datadic={}
         for index in range(0, len(List)):
-            if index >= 13:
+            if index >= 19:
                 break
             if index==0:
                 if '-' in List[index]:
@@ -67,11 +67,14 @@ def citydict(Lables,data):
                 continue
             ckAlldata=cdic.get(ck)
             # last保存前面所有日期的该城市累加值
-            last = {Lables[4]: 0, Lables[5]: 0, Lables[6]: 0}
+            last = {Lables[4]: 0, Lables[5]: 0, Lables[6]: 0,Lables[7]:0,Lables[8]:0,Lables[9]:0}
             for cday_data in ckAlldata:
-                last[Lables[4]]+=(int(cday_data[Lables[4]])+ int(cday_data[Lables[7]]))
-                last[Lables[5]] += int(cday_data[Lables[5]])+int(cday_data[Lables[8]])
-                last[Lables[6]] += int(cday_data[Lables[6]])+int(cday_data[Lables[9]])
+                last[Lables[4]]+=(int(cday_data[Lables[4]])+ int(cday_data[Lables[10]]))
+                last[Lables[5]] += int(cday_data[Lables[5]])+int(cday_data[Lables[11]])
+                last[Lables[6]] += int(cday_data[Lables[6]])+int(cday_data[Lables[12]])
+                last[Lables[7]]+=int(cday_data[Lables[7]])
+                last[Lables[8]] += int(cday_data[Lables[8]])
+                last[Lables[9]] += int(cday_data[Lables[9]])
                 # print(last)
                 # break
                 g =cday_data.get(Lables[0]).split('月')
@@ -82,26 +85,40 @@ def citydict(Lables,data):
                     continue
                 elif int(g[0]) >= 2 and int(g[1]) < 16:
                     continue
-                if last[Lables[4]]!=int(cday_data[Lables[10]]):
+                if last[Lables[4]]!=int(cday_data[Lables[13]]):
                     cerrnum+=1
                     cerr.append({cday_data[Lables[0]]:{pk:{ck:{Lables[4]:last[Lables[4]],
-                                                               Lables[10]:cday_data[Lables[10]]}}}})
-                if last[Lables[5]]!=int(cday_data[Lables[11]]):
+                                                               Lables[13]:cday_data[Lables[13]]}}}})
+                #=======================每日无症状===========
+                if last[Lables[7]]!=int(cday_data[Lables[16]]):
+                    cerrnum+=1
+                    cerr.append({cday_data[Lables[0]]:{pk:{ck:{Lables[7]:last[Lables[7]],
+                                                               Lables[16]:cday_data[Lables[16]]}}}})
+                if last[Lables[8]]!=int(cday_data[Lables[17]]):
+                    cerrnum+=1
+                    cerr.append({cday_data[Lables[0]]:{pk:{ck:{Lables[8]:last[Lables[8]],
+                                                               Lables[17]:cday_data[Lables[17]]}}}})
+                if last[Lables[9]]!=int(cday_data[Lables[18]]):
+                    cerrnum+=1
+                    cerr.append({cday_data[Lables[0]]:{pk:{ck:{Lables[9]:last[Lables[9]],
+                                                               Lables[18]:cday_data[Lables[18]]}}}})
+                #===========================================================================
+                if last[Lables[5]]!=int(cday_data[Lables[14]]):
                     warningnum+=1
                     if pk=='福建' or pk=='湖北' or pk=='陕西' or pk=='北京'or pk=='河南'or pk=='广东':
                         warning2.append({cday_data[Lables[0]]: {pk: {ck: {Lables[5]: last[Lables[5]],
-                                                                  Lables[11]: cday_data[Lables[11]]}}}})
+                                                                  Lables[14]: cday_data[Lables[14]]}}}})
                     else:
                         warning.append({cday_data[Lables[0]]: {pk: {ck: {Lables[5]: last[Lables[5]],
-                                                                  Lables[11]: cday_data[Lables[11]]}}}})
-                if last[Lables[6]]!=int(cday_data[Lables[12]]):
+                                                                  Lables[14]: cday_data[Lables[14]]}}}})
+                if last[Lables[6]]!=int(cday_data[Lables[15]]):
                     warningnum += 1
                     if pk=='福建' or pk=='湖北' or pk=='陕西' or pk=='北京'or pk=='河南'or pk=='广东' or  pk=='上海':
                         warning2.append({cday_data[Lables[0]]: {pk: {ck: {Lables[6]: last[Lables[6]],
-                                                                  Lables[12]: cday_data[Lables[12]]}}}})
+                                                                  Lables[15]: cday_data[Lables[15]]}}}})
                     else:
                         warning.append({cday_data[Lables[0]]: {pk: {ck: {Lables[6]: last[Lables[6]],
-                                                                  Lables[12]: cday_data[Lables[12]]}}}})
+                                                                  Lables[15]: cday_data[Lables[15]]}}}})
     return cerr,cerrnum,warning,warningnum,warning2
 def writeCerr(filename,cerr):
     fp = open(filename, "a+", encoding="utf-8")
@@ -171,7 +188,7 @@ def datedict(Lables, data):
         List =re.split(',|\\t',Len)
         lable = {}
         for index in range(0, len(List)):
-            if index>=13:
+            if index>=19:
                 break
             if index==0:
                 if '-' in List[index]:
@@ -253,6 +270,9 @@ def computeDay(prodicts, proLists, Lables):
                     protype[p.get(Lables[1]) + "累计"][Lables[7]] = int(p.get(Lables[7]))
                     protype[p.get(Lables[1]) + "累计"][Lables[8]] = int(p.get(Lables[8]))
                     protype[p.get(Lables[1]) + "累计"][Lables[9]] = int(p.get(Lables[9]))
+                    protype[p.get(Lables[1]) + "累计"][Lables[10]] = int(p.get(Lables[10]))
+                    protype[p.get(Lables[1]) + "累计"][Lables[11]] = int(p.get(Lables[11]))
+                    protype[p.get(Lables[1]) + "累计"][Lables[12]] = int(p.get(Lables[12]))
                 else:
                     protype[p.get(Lables[1])].append(p)
                     protype[p.get(Lables[1]) + "累计"][Lables[4]] += int(p.get(Lables[4]))
@@ -261,6 +281,9 @@ def computeDay(prodicts, proLists, Lables):
                     protype[p.get(Lables[1]) + "累计"][Lables[7]] += int(p.get(Lables[7]))
                     protype[p.get(Lables[1]) + "累计"][Lables[8]] += int(p.get(Lables[8]))
                     protype[p.get(Lables[1]) + "累计"][Lables[9]] += int(p.get(Lables[9]))
+                    protype[p.get(Lables[1]) + "累计"][Lables[10]] += int(p.get(Lables[10]))
+                    protype[p.get(Lables[1]) + "累计"][Lables[11]] += int(p.get(Lables[11]))
+                    protype[p.get(Lables[1]) + "累计"][Lables[12]] += int(p.get(Lables[12]))
             prodic_1[prokey] = protype
             # ========将每个省当天datekey省级与地区的数据放入数组中
             ss = []
@@ -308,12 +331,27 @@ def computeDay(prodicts, proLists, Lables):
                     perrdics[datekey].append(
                         {prokey: {typesSum[0]: {Lables[7]: protype.get(typesSum[0])[Lables[7]]},
                                   typesSum[1]: {Lables[7]: protype.get(typesSum[1])[Lables[7]]}}})
+                if protype.get(typesSum[0])[Lables[8]] != protype.get(typesSum[1])[Lables[8]]:
+                    dayErr += 1
+                    perrdics[datekey].append(
+                        {prokey: {typesSum[0]: {Lables[8]: protype.get(typesSum[0])[Lables[8]]},
+                                  typesSum[1]: {Lables[8]: protype.get(typesSum[1])[Lables[8]]}}})
+                if protype.get(typesSum[0])[Lables[9]] != protype.get(typesSum[1])[Lables[9]]:
+                    dayErr += 1
+                    perrdics[datekey].append(
+                        {prokey: {typesSum[0]: {Lables[9]: protype.get(typesSum[0])[Lables[9]]},
+                                  typesSum[1]: {Lables[9]: protype.get(typesSum[1])[Lables[9]]}}})
+                if protype.get(typesSum[0])[Lables[10]] != protype.get(typesSum[1])[Lables[10]]:
+                    dayErr += 1
+                    perrdics[datekey].append(
+                        {prokey: {typesSum[0]: {Lables[10]: protype.get(typesSum[0])[Lables[10]]},
+                                  typesSum[1]: {Lables[10]: protype.get(typesSum[1])[Lables[10]]}}})
                     # ===================================================
             # print(types,typesSum)
             # break
         # print(stypesum)
         # ===========复核每天各省和全国=====================
-        prosum = {Lables[4]: 0, Lables[5]: 0, Lables[6]: 0, Lables[7]: 0}
+        prosum = {Lables[4]: 0, Lables[5]: 0, Lables[6]: 0, Lables[7]: 0,Lables[8]:0,Lables[9]:0,Lables[10]:0}
         csum = None
         #print(proLists,stypesum.get('内蒙古'))
         for pro in proLists:
@@ -400,12 +438,12 @@ def computedS(dateList,compdics,proList,Lables):
         #print(proDic.get(pk))
         index=0
         #last保存前面所有日期的省级累加值
-        last={Lables[4]:0,Lables[5]:0,Lables[6]:0}
+        last={Lables[4]:0,Lables[5]:0,Lables[6]:0,Lables[7]:0,Lables[8]:0,Lables[9]:0}
         #lastnow保存前面最新的卫健委累计数据
-        lastnow={Lables[10]:0,Lables[11]:0,Lables[12]:0}
+        lastnow={Lables[13]:0,Lables[14]:0,Lables[15]:0,Lables[16]:0,Lables[17]:0,Lables[18]:0}
         for d in proDic.get(pk):
             d.get(list(d.keys())[0]).get('省级')
-            now={Lables[10]:0,Lables[11]:0,Lables[12]:0}
+            now={Lables[13]:0,Lables[14]:0,Lables[15]:0,Lables[16]:0,Lables[17]:0,Lables[18]:0}
             if d.get(list(d.keys())[0]).get('省级')==None:
                 t=datekey.split(' ')[0].split('/')
                 #print(t)
@@ -416,16 +454,28 @@ def computedS(dateList,compdics,proList,Lables):
             #print(d.get(list(d.keys())[0]).get('省级'))
             for k in d.get(list(d.keys())[0]).get('省级'):
                 datekey=k[Lables[0]]
-                last[Lables[4]]+=(int(k.get(Lables[4]))+int(k.get(Lables[7])))
-                last[Lables[5]] +=(int(k.get(Lables[5]))+int(k.get(Lables[8])))
-                last[Lables[6]] +=(int(k.get(Lables[6]))+int(k.get(Lables[9])))
-                now[Lables[10]]+=int(k.get(Lables[10]))
-                now[Lables[11]]+= int(k.get(Lables[11]))
-                now[Lables[12]]+= int(k.get(Lables[12]))
+                last[Lables[4]]+=(int(k.get(Lables[4]))+int(k.get(Lables[10])))
+                last[Lables[5]] +=(int(k.get(Lables[5]))+int(k.get(Lables[11])))
+                last[Lables[6]] +=(int(k.get(Lables[6]))+int(k.get(Lables[12])))
+
+                last[Lables[7]] += int(k.get(Lables[7]))
+                last[Lables[8]] += int(k.get(Lables[8]))
+                last[Lables[9]] += (int(k.get(Lables[9])) )
+
+                now[Lables[13]]+=int(k.get(Lables[13]))
+                now[Lables[14]]+= int(k.get(Lables[14]))
+                now[Lables[15]]+= int(k.get(Lables[15]))
+
+                now[Lables[16]] += int(k.get(Lables[16]))
+                now[Lables[17]] += int(k.get(Lables[17]))
+                now[Lables[18]] += int(k.get(Lables[18]))
             pLk={}
             pLk[Lables[4]] = last[Lables[4]]
             pLk[Lables[5]] = last[Lables[5]]
             pLk[Lables[6]] = last[Lables[6]]
+            pLk[Lables[7]] = last[Lables[7]]
+            pLk[Lables[8]] = last[Lables[8]]
+            pLk[Lables[9]] = last[Lables[9]]
             Allpro[pk][datekey]={'省级积累':pLk,'卫健委':now}
             #保存第一天的累计
             if index == 0:
@@ -443,44 +493,79 @@ def computedS(dateList,compdics,proList,Lables):
             elif int(g[0]) >= 2 and int(g[1]) < 16:
                 continue
 
-            if last.get(Lables[4])!=now.get(Lables[10]):
-                if now.get(Lables[10])!=0:
+            if last.get(Lables[4])!=now.get(Lables[13]):
+                if now.get(Lables[13])!=0:
                     SumErr+=1
-                    err.append({pk:{datekey:{Lables[4]:last.get(Lables[4]),Lables[10]:now.get(Lables[10])}}})
+                    err.append({pk:{datekey:{Lables[4]:last.get(Lables[4]),Lables[13]:now.get(Lables[13])}}})
                 else:
-                    if last.get(Lables[4]) != lastnow.get(Lables[10]):
+                    if last.get(Lables[4]) != lastnow.get(Lables[13]):
                         SumErr += 1
-                        err.append({pk: {datekey: {Lables[4]: last.get(Lables[4]), Lables[10]: lastnow.get(Lables[10])}}})
-            if last.get(Lables[5])!=now.get(Lables[11]):
-                if  now.get(Lables[11])!=0:
+                        err.append({pk: {datekey: {Lables[4]: last.get(Lables[4]), Lables[13]: lastnow.get(Lables[13])}}})
+            if last.get(Lables[5])!=now.get(Lables[14]):
+                if  now.get(Lables[14])!=0:
                     SumErr += 1
-                    err.append({pk: {datekey: {Lables[5]: last.get(Lables[5]), Lables[11]: now.get(Lables[11])}}})
+                    err.append({pk: {datekey: {Lables[5]: last.get(Lables[5]), Lables[14]: now.get(Lables[14])}}})
                 else:
-                    if last.get(Lables[5])!=lastnow.get(Lables[11]):
+                    if last.get(Lables[5])!=lastnow.get(Lables[14]):
                         SumErr += 1
-                        err.append({pk: {datekey: {Lables[5]: last.get(Lables[5]), Lables[11]: lastnow.get(Lables[11])}}})
-            if last.get(Lables[6])!=now.get(Lables[12]):
-                if now.get(Lables[12])!=0:
+                        err.append({pk: {datekey: {Lables[5]: last.get(Lables[5]), Lables[14]: lastnow.get(Lables[14])}}})
+            if last.get(Lables[6])!=now.get(Lables[15]):
+                if now.get(Lables[15])!=0:
                     SumErr += 1
-                    err.append({pk: {datekey: {Lables[6]: last.get(Lables[6]), Lables[12]: now.get(Lables[12])}}})
+                    err.append({pk: {datekey: {Lables[6]: last.get(Lables[6]), Lables[15]: now.get(Lables[15])}}})
                 else:
-                    if last.get(Lables[6])!=lastnow.get(Lables[12]):
+                    if last.get(Lables[6])!=lastnow.get(Lables[15]):
                         SumErr += 1
-                        err.append({pk: {datekey: {Lables[6]: last.get(Lables[6]), Lables[12]: lastnow.get(Lables[12])}}})
-            if now.get(Lables[10])!=0 :
-                lastnow[Lables[10]]=now.get(Lables[10])
-            if now.get(Lables[11])!=0 :
-                lastnow[Lables[11]] = now.get(Lables[11])
-            if now.get(Lables[12])!=0:
-                lastnow[Lables[12]] = now.get(Lables[12])
+                        err.append({pk: {datekey: {Lables[6]: last.get(Lables[6]), Lables[15]: lastnow.get(Lables[15])}}})
+            if last.get(Lables[7])!=now.get(Lables[16]):
+                if now.get(Lables[16])!=0:
+                    SumErr += 1
+                    err.append({pk: {datekey: {Lables[7]: last.get(Lables[7]), Lables[16]: now.get(Lables[16])}}})
+                else:
+                    if last.get(Lables[7])!=lastnow.get(Lables[16]):
+                        SumErr += 1
+                        err.append({pk: {datekey: {Lables[7]: last.get(Lables[7]), Lables[16]: lastnow.get(Lables[16])}}})
+
+            if last.get(Lables[8])!=now.get(Lables[17]):
+                if now.get(Lables[17])!=0:
+                    SumErr += 1
+                    err.append({pk: {datekey: {Lables[8]: last.get(Lables[8]), Lables[17]: now.get(Lables[17])}}})
+                else:
+                    if last.get(Lables[8])!=lastnow.get(Lables[17]):
+                        SumErr += 1
+                        err.append({pk: {datekey: {Lables[8]: last.get(Lables[8]), Lables[17]: lastnow.get(Lables[17])}}})
+            if last.get(Lables[9])!=now.get(Lables[18]):
+                if now.get(Lables[18])!=0:
+                    SumErr += 1
+                    err.append({pk: {datekey: {Lables[9]: last.get(Lables[9]), Lables[18]: now.get(Lables[18])}}})
+                else:
+                    if last.get(Lables[9])!=lastnow.get(Lables[18]):
+                        SumErr += 1
+                        err.append({pk: {datekey: {Lables[9]: last.get(Lables[9]), Lables[18]: lastnow.get(Lables[18])}}})
+
+            if now.get(Lables[13])!=0 :
+                lastnow[Lables[13]]=now.get(Lables[13])
+            if now.get(Lables[14])!=0 :
+                lastnow[Lables[14]] = now.get(Lables[14])
+            if now.get(Lables[15])!=0:
+                lastnow[Lables[15]] = now.get(Lables[15])
+            if now.get(Lables[16])!=0:
+                lastnow[Lables[16]] = now.get(Lables[16])
+            if now.get(Lables[17])!=0:
+                lastnow[Lables[17]] = now.get(Lables[17])
+            if now.get(Lables[18])!=0:
+                lastnow[Lables[18]] = now.get(Lables[18])
         #print(err)
         #break
     #print(Allpro.get('安徽'))
     return err,Allpro,SumErr
 def nowTolastnow(lastnow,now,Lables):
-    lastnow[Lables[10]] = now[Lables[10]]
-    lastnow[Lables[11]] = now[Lables[11]]
-    lastnow[Lables[12]] = now[Lables[12]]
+    lastnow[Lables[13]] = now[Lables[13]]
+    lastnow[Lables[14]] = now[Lables[14]]
+    lastnow[Lables[15]] = now[Lables[15]]
+    lastnow[Lables[16]] = now[Lables[16]]
+    lastnow[Lables[17]] = now[Lables[17]]
+    lastnow[Lables[18]] = now[Lables[18]]
     return lastnow
 
 def write1(filename,perrdics,dateList):
@@ -679,9 +764,9 @@ def CMDUse():
     filePath=sys.argv[1]
     sys.exit(checkMain(filePath))
 if __name__ == '__main__':
-    CheckFilepath = 'Mergetemp.csv'
-    print(checkMain(CheckFilepath))
-    # CMDUse()
+    # CheckFilepath = './Mergerdata/MergeData_20200401_23-35-16.csv'
+    # print(checkMain(CheckFilepath))
+    CMDUse()
     # filename = './Mergerdata/MergeData_20200216(3).csv'
     #
     # Lables, data = readFile(filename)
