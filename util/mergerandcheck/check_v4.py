@@ -14,9 +14,14 @@ import MergeData_Check as check
 
 is_null_data=[]
 is_error_data=[]
-colums=['序号','统计级别','数据起始时间','数据结束时间','国家','省份','城市','区县','新增确诊人数','新增疑似人数','新增治愈人数','新增死亡人数','累计确诊人数','累计疑似人数','累计治愈人数','累计死亡人数','核减人数','累计核减人数','数据源','数据发布时间','数据源文本','数据源链接','数据间接发布时间','数据间接发布来源','数据间接发布来源链接','数据收集时间','数据收集方式','数据收集人员/程序姓名','数据是否核查','数据首次核查时间','数据首次核查方式','数据首次核查人员/程序姓名','数据首次核查状态','更正人员','更正时间','数据再次核查时间','数据再次核查方式','数据再次核查人员/程序姓名','数据再次核查状态','备注']
-daily_data=['新增确诊人数','新增疑似人数','新增治愈人数','新增死亡人数','累计确诊人数','累计疑似人数','累计治愈人数','累计死亡人数','核减人数','累计核减人数']
-old_colums=['公开时间','类别','省份','城市','新增确诊病例','新增治愈出院数','新增死亡数','核减','治愈核减','死亡核减','累计确诊人数','累计治愈人数','累计死亡人数']
+colums=['序号','统计级别','数据起始时间','数据结束时间','国家','省份','城市','区县',
+    '新增确诊人数','新增疑似人数','新增治愈人数','新增死亡人数','新增无症状感染人数','新增无症状感染治愈人数','新增无症状感染死亡人数',
+    '累计确诊人数','累计疑似人数','累计治愈人数','累计死亡人数','累计无症状感染人数','累计无症状感染治愈人数','累计无症状感染死亡人数',
+    '核减人数','累计核减人数','数据源','数据发布时间','数据源文本','数据源链接','数据间接发布时间','数据间接发布来源','数据间接发布来源链接','数据收集时间',
+    '数据收集方式','数据收集人员/程序姓名','数据是否核查','数据首次核查时间','数据首次核查方式','数据首次核查人员/程序姓名','数据首次核查状态','更正人员','更正时间','数据再次核查时间','数据再次核查方式','数据再次核查人员/程序姓名','数据再次核查状态','备注']
+daily_data=['新增确诊人数','新增疑似人数','新增治愈人数','新增死亡人数','新增无症状感染病例','新增无症状感染治愈数','新增无症状感染死亡数',
+    '累计确诊人数','累计疑似人数','累计治愈人数','累计死亡人数','累计无症状感染人数','累计无症状感染治愈人数','累计无症状感染死亡人数''核减人数','累计核减人数']
+old_colums=['公开时间','类别','省份','城市','新增确诊病例','新增治愈出院数','新增死亡数','新增无症状感染人数','新增无症状感染治愈人数','新增无症状感染死亡人数','核减','治愈核减','死亡核减','累计确诊人数','累计治愈人数','累计死亡人数','累计无症状感染人数','累计无症状感染治愈人数','累计无症状感染死亡人数']
 
 time_today=datetime.datetime.now().strftime('%Y%m%d')
 time_Nowhour=datetime.datetime.now().strftime('%H-%M-%S')
@@ -63,45 +68,57 @@ def exchangetooldcol(data):
             log.write('异常原因:'+out_info+'\n')
         return 1
     daily={}
-    Diagnosed_time=[]
+    Diagnosed_time=[] #公开时间
     start_time=[]
     end_time=[]
-    type=[]
-    province=[]
-    city=[]
-    in_diagnosed=[]
-    in_cure=[]
-    in_die=[]
-    in_check=[]
-    sum_diag=[]
-    sum_cure=[]
-    sum_die=[]
-    cure_check=[]
-    die_check=[]
-    data_1=''
-    data_check_1=''
-    data_check_2=''
-    data_2=''
-    data_3=''
-    data_4=''
-    data_5=''
-    data_6=''
-    data_7=''
-    data_8=''
-    data_9=''
-    data_10=''
-    data_11=''
+    type=[]     #类别
+    province=[] #省份
+    city=[]     #城市
+    in_diagnosed=[]  #新增确诊病例
+    in_cure=[]    #新增治愈病例   
+    in_die=[]     #新增死亡病例
+    in_check=[]   #核减
+    sum_diag=[]   #累计确诊人数
+    sum_cure=[]   #累计治愈人数
+    sum_die=[]    #累计死亡人数
+    cure_check=[] #治愈核减
+    die_check=[]  #死亡核减
+    in_asymptomatic=[] #新增无症状感染病例
+    in_asy_cure=[]     #新增无症状感染治愈病例
+    in_asy_dir=[]      #新增无症状感染死亡病例
+    sum_asymptomatic=[]  #累计无症状感染确诊病例
+    sum_asy_cure=[]      #累计无症状感染治愈病例
+    sum_asy_dir=[]       #累计无症状感染死亡病例
+    data_1=''     #确诊时间
+    data_check_1=''    #治愈核减
+    data_check_2=''    #死亡核减
+    data_2=''     #类别
+    data_3=''     #省份
+    data_4=''     #城市
+    data_5=''     #新增确诊人数
+    data_6=''     #新增治愈人数
+    data_7=''     #新增死亡人数
+    data_8=''     #核减人数
+    data_9=''     #累计确诊人数
+    data_10=''    #累计治愈人数
+    data_11=''    #累计死亡人数
+    data_12=''    #新增无症状感染人数
+    data_13=''    #新增无症状感染治愈人数
+    data_14=''    #新增无症状感染死亡人数
+    data_15=''    #累计无症状感染人数
+    data_16=''    #累计无症状感染治愈人数
+    data_17=''    #累计无症状感染死亡人数
     data_xinjiang=[0,0,0,0,0,0,0,0,0,0]
     data_shape=data.shape[0]
     for row in range(0,data_shape):
         temp_data=data.iloc[row,:].copy()
         if temp_data[1]=='省级' or temp_data[1]=='国家级':
-            for i in range(5,23):
+            for i in range(5,29):
                 if temp_data[colums[i-5]]!=temp_data[colums[i-5]]:
                     temp_data.loc[colums[i-5]]=''
 
             date=''
-            temp_date=str(temp_data[colums[2]])
+            temp_date=str(temp_data['数据起始时间'])
             if '/' in temp_date:
                 try: 
                     date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y/%m/%d %H:%M:%S')
@@ -115,8 +132,8 @@ def exchangetooldcol(data):
 
             date_ex=entoch(date,temp_data['省份'])
             
-            date_today=datetime.datetime.now()
-            judge_date=str(date_today.month)+'月'+str(date_today.day-1)+'日'
+            date_today=datetime.datetime.now()-datetime.timedelta(days=1)
+            judge_date=str(date_today.month)+'月'+str(date_today.day)+'日'
             if date_ex!=judge_date:
                 err_info='文件日期不符'
                 with open(log_file,"w",encoding='utf_8_sig') as log:
@@ -127,32 +144,38 @@ def exchangetooldcol(data):
                 temp_data.loc['省份']=newname.get_pure_province_name(temp_data['省份'])
             
             if '新疆' in temp_data['省份']:
-                for i in range(0,10):
+                for i in range(0,16):
                     if temp_data[daily_data[i]]=='':
                         temp_data.loc[daily_data[i]]=0
-                for count in range(0,10):
+                for count in range(0,16):
                     data_xinjiang[count]+=int(temp_data[daily_data[count]])
-                for count_ in range(0,10):
+                for count_ in range(0,16):
                     temp_data.loc[daily_data[count_]]=data_xinjiang[count_] 
 
             data_1=date_ex
             #data_time_1=str(temp_data[colums[2]])
             #data_time_2=str(temp_data[colums[3]])
-            data_2=str(temp_data[colums[1]])
-            data_3=str(temp_data[colums[5]])
-            data_5=str(temp_data[daily_data[0]])
-            data_6=str(temp_data[daily_data[2]])
-            data_7=str(temp_data[daily_data[3]])
-            data_8=str(temp_data[daily_data[8]])
-            data_9=str(temp_data[colums[12]])
+            data_2=str(temp_data['统计级别'])
+            data_3=str(temp_data['省份'])
+            data_5=str(temp_data['新增确诊人数'])
+            data_6=str(temp_data['新增治愈人数'])
+            data_7=str(temp_data['新增死亡人数'])
+            data_8=str(temp_data['核减人数'])
+            data_9=str(temp_data['累计确诊人数'])
             data_10=str(temp_data['累计治愈人数'])
             data_11=str(temp_data['累计死亡人数'])
+            data_12=str(temp_data['新增无症状感染人数'])
+            data_13=str(temp_data['新增无症状感染治愈人数'])
+            data_14=str(temp_data['新增无症状感染死亡人数'])
+            data_15=str(temp_data['累计无症状感染人数'])
+            data_16=str(temp_data['累计无症状感染治愈人数'])
+            data_17=str(temp_data['累计无症状感染死亡人数'])
             data_check_1=''
             data_check_2=''
 
         elif temp_data['统计级别']=='城市级':
             
-            for i in range(0,18):
+            for i in range(0,24):
                 if temp_data[colums[i]]!=temp_data[colums[i]]:
                     temp_data.loc[colums[i]]=''  
             
@@ -160,7 +183,7 @@ def exchangetooldcol(data):
             temp_data.loc['省份']=newname.get_pure_province_name(temp_data['省份'])
             temp_data.loc['城市']=newname.get_pure_city_name(temp_data['城市'])
             date=''
-            temp_date=str(temp_data[colums[2]])
+            temp_date=str(temp_data['数据起始时间'])
             if '/' in temp_date:
                 try: 
                     date=datetime.datetime.strptime(temp_date.split('\r')[0],'%Y/%m/%d %H:%M:%S')
@@ -174,8 +197,8 @@ def exchangetooldcol(data):
 
             date_ex=entoch(date,temp_data['省份'])
 
-            date_today=datetime.datetime.now()
-            judge_date=str(date_today.month)+'月'+str(date_today.day-1)+'日'
+            date_today=datetime.datetime.now()-datetime.timedelta(days=1)
+            judge_date=str(date_today.month)+'月'+str(date_today.day)+'日'
             if date_ex!=judge_date:
                 err_info='文件日期不符'
                 with open(log_file,"w",encoding='utf_8_sig') as log:
@@ -185,16 +208,22 @@ def exchangetooldcol(data):
             #start_time.append(str(temp_data[colums[2]]))
             #end_time.append(str(temp_data[colums[3]]))
             Diagnosed_time.append(date_ex)
-            type.append(str(temp_data[colums[1]]))
-            province.append(str(temp_data[colums[5]]))
-            city.append(str(temp_data[colums[6]]))
-            in_diagnosed.append(str(temp_data[daily_data[0]]))
-            in_cure.append(str(temp_data[daily_data[2]]))
-            in_die.append(str(temp_data[daily_data[3]]))
-            in_check.append(str(temp_data[daily_data[8]]))
-            sum_diag.append(str(temp_data[colums[12]]))
+            type.append(str(temp_data['统计级别']))
+            province.append(str(temp_data['省份']))
+            city.append(str(temp_data['城市']))
+            in_diagnosed.append(str(temp_data['新增确诊人数']))
+            in_cure.append(str(temp_data['新增治愈人数']))
+            in_die.append(str(temp_data['新增死亡人数']))
+            in_check.append(str(temp_data['核减人数']))
+            sum_diag.append(str(temp_data['累计确诊人数']))
             sum_cure.append(str(temp_data['累计治愈人数']))
             sum_die.append(str(temp_data['累计死亡人数']))
+            in_asymptomatic.append(str(temp_data['新增无症状感染人数']))
+            in_asy_cure.append(str(temp_data['新增无症状感染治愈人数']))
+            in_asy_dir.append(str(temp_data['新增无症状感染死亡人数']))
+            sum_asymptomatic.append(str(temp_data['累计无症状感染人数']))
+            sum_asy_cure.append(str(temp_data['累计无症状感染治愈人数']))
+            sum_asy_dir.append(str(temp_data['累计无症状感染死亡人数']))
             cure_check.append('')
             die_check.append('')
 
@@ -211,6 +240,12 @@ def exchangetooldcol(data):
     sum_diag.append(data_9)
     sum_cure.append(data_10)
     sum_die.append(data_11)
+    in_asymptomatic.append(data_12)
+    in_asy_cure.append(data_13)
+    in_asy_dir.append(data_14)
+    sum_asymptomatic.append(data_15)
+    sum_asy_cure.append(data_16)
+    sum_asy_dir.append(data_17)
     cure_check.append(data_check_1)
     die_check.append(data_check_2)
 
@@ -224,12 +259,18 @@ def exchangetooldcol(data):
         '新增确诊病例':in_diagnosed,
         '新增治愈出院数':in_cure,
         '新增死亡数':in_die,
+        '新增无症状感染人数':in_asymptomatic,
+        '新增无症状感染治愈人数':in_asy_cure,
+        '新增无症状感染死亡人数':in_asy_dir,
         '核减':in_check,
         '治愈核减':cure_check,
         '死亡核减':die_check,
         '累计确诊人数':sum_diag,
         '累计治愈人数':sum_cure,
-        '累计死亡人数':sum_die
+        '累计死亡人数':sum_die,
+        '累计无症状感染人数':in_asymptomatic,
+        '累计无症状感染治愈人数':in_asy_cure,
+        '累计无症状感染死亡人数':in_asy_dir
     }
     return daily
 
@@ -264,6 +305,12 @@ def check_last_data(data):
     sum_die=[]
     sum_cure_check=[]
     sum_die_check=[]
+    in_asymptomatic=[] 
+    in_asy_cure=[]     
+    in_asy_dir=[]      
+    sum_asymptomatic=[]  
+    sum_asy_cure=[] 
+    sum_asy_dir=[]
     data_shape=data.shape[0]
     map_colums=['公开时间','类别','省份','城市','新增确诊病例','新增治愈出院数','新增死亡数','核减','治愈核减','死亡核减','累计确诊人数','累计治愈人数','累计死亡人数']
     for row in range(0,data_shape):
@@ -272,9 +319,9 @@ def check_last_data(data):
         if temp_data['类别']=='国外':
             continue
         
-        for i in range(0,13):
-            if temp_data[map_colums[i]]!=temp_data[map_colums[i]]:
-                temp_data.loc[map_colums[i]]=''
+        for i in range(0,19):
+            if temp_data[old_colums[i]]!=temp_data[old_colums[i]]:
+                temp_data.loc[old_colums[i]]=''
 
         #start_time_p,end_time_p=time_transfer(temp_data['公开时间'])
         #start_time.append(start_time_p)
@@ -292,9 +339,15 @@ def check_last_data(data):
         sum_diag.append(str(temp_data['累计确诊人数']))
         sum_cure.append(str(temp_data['累计治愈人数']))
         sum_die.append(str(temp_data['累计死亡人数']))
+        in_asymptomatic.append(str(temp_data['新增无症状感染人数']))
+        in_asy_cure.append(str(temp_data['新增无症状感染治愈人数']))
+        in_asy_dir.append(str(temp_data['新增无症状感染死亡人数']))
+        sum_asymptomatic.append(str(temp_data['累计无症状感染人数']))
+        sum_asy_cure.append(str(temp_data['累计无症状感染治愈人数']))
+        sum_asy_dir.append(str(temp_data['累计无症状感染死亡人数']))
 
     daily={
-        '确诊时间':Diagnosed_time,
+        '公开时间':Diagnosed_time,
         #'数据起始时间':start_time,
         #'数据结束时间':end_time,
         '类别':type,
@@ -303,12 +356,18 @@ def check_last_data(data):
         '新增确诊病例':in_diagnosed,
         '新增治愈出院数':in_cure,
         '新增死亡数':in_die,
+        '新增无症状感染人数':in_asymptomatic,
+        '新增无症状感染治愈人数':in_asy_cure,
+        '新增无症状感染死亡人数':in_asy_dir,
         '核减':in_check,
         '治愈核减':sum_cure_check,
         '死亡核减':sum_die_check,
         '累计确诊人数':sum_diag,
         '累计治愈人数':sum_cure,
-        '累计死亡人数':sum_die
+        '累计死亡人数':sum_die,
+        '累计无症状感染人数':in_asymptomatic,
+        '累计无症状感染治愈人数':in_asy_cure,
+        '累计无症状感染死亡人数':in_asy_dir
     }
         
     return daily
@@ -331,6 +390,7 @@ def add_last_data(file):
 def check_xlsx_data(file):
     file_list=[]
     dir_list=[]
+    #get_file_path(root_path,file_list,dir_list)
     merge_result='1'
     sys_str=platform.system()
     flag=''
@@ -405,5 +465,5 @@ def checkv4_Main(mergeDataFile,data_dir):
     return outputfile,merge_result
 
 #if __name__ == "__main__":
-#    out_file,result = checkv4_Main('MergeData_20200307_10-59-59.csv','../tempdata/gansuCaseStatistics_20200306.xlsx')
+#    out_file,result = checkv4_Main('Mergetemp.csv','wahaha')
 #    print(result)
