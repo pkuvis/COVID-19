@@ -90,7 +90,7 @@ def citydict(Lables,data):
                     cerr.append({cday_data[Lables[0]]:{pk:{ck:{Lables[4]:last[Lables[4]],
                                                                Lables[13]:cday_data[Lables[13]]}}}})
                 #=======================每日无症状===========
-                if last[Lables[7]]!=int(cday_data[Lables[16]]):
+                '''if last[Lables[7]]!=int(cday_data[Lables[16]]):
                     cerrnum+=1
                     cerr.append({cday_data[Lables[0]]:{pk:{ck:{Lables[7]:last[Lables[7]],
                                                                Lables[16]:cday_data[Lables[16]]}}}})
@@ -101,7 +101,7 @@ def citydict(Lables,data):
                 if last[Lables[9]]!=int(cday_data[Lables[18]]):
                     cerrnum+=1
                     cerr.append({cday_data[Lables[0]]:{pk:{ck:{Lables[9]:last[Lables[9]],
-                                                               Lables[18]:cday_data[Lables[18]]}}}})
+                                                               Lables[18]:cday_data[Lables[18]]}}}})'''
                 #===========================================================================
                 if last[Lables[5]]!=int(cday_data[Lables[14]]):
                     warningnum+=1
@@ -326,7 +326,7 @@ def computeDay(prodicts, proLists, Lables):
                     perrdics[datekey].append(
                         {prokey: {typesSum[0]: {Lables[6]:protype.get(typesSum[0])[Lables[6]]},
                                   typesSum[1]: {Lables[6]:protype.get(typesSum[1])[Lables[6]]}}})
-                if protype.get(typesSum[0])[Lables[7]] != protype.get(typesSum[1])[Lables[7]]:
+                '''if protype.get(typesSum[0])[Lables[7]] != protype.get(typesSum[1])[Lables[7]]:
                     dayErr += 1
                     perrdics[datekey].append(
                         {prokey: {typesSum[0]: {Lables[7]: protype.get(typesSum[0])[Lables[7]]},
@@ -340,7 +340,7 @@ def computeDay(prodicts, proLists, Lables):
                     dayErr += 1
                     perrdics[datekey].append(
                         {prokey: {typesSum[0]: {Lables[9]: protype.get(typesSum[0])[Lables[9]]},
-                                  typesSum[1]: {Lables[9]: protype.get(typesSum[1])[Lables[9]]}}})
+                                  typesSum[1]: {Lables[9]: protype.get(typesSum[1])[Lables[9]]}}})'''
                 if protype.get(typesSum[0])[Lables[10]] != protype.get(typesSum[1])[Lables[10]]:
                     dayErr += 1
                     perrdics[datekey].append(
@@ -517,7 +517,7 @@ def computedS(dateList,compdics,proList,Lables):
                     if last.get(Lables[6])!=lastnow.get(Lables[15]):
                         SumErr += 1
                         err.append({pk: {datekey: {Lables[6]: last.get(Lables[6]), Lables[15]: lastnow.get(Lables[15])}}})
-            if last.get(Lables[7])!=now.get(Lables[16]):
+            '''if last.get(Lables[7])!=now.get(Lables[16]):
                 if now.get(Lables[16])!=0:
                     SumErr += 1
                     err.append({pk: {datekey: {Lables[7]: last.get(Lables[7]), Lables[16]: now.get(Lables[16])}}})
@@ -541,7 +541,7 @@ def computedS(dateList,compdics,proList,Lables):
                 else:
                     if last.get(Lables[9])!=lastnow.get(Lables[18]):
                         SumErr += 1
-                        err.append({pk: {datekey: {Lables[9]: last.get(Lables[9]), Lables[18]: lastnow.get(Lables[18])}}})
+                        err.append({pk: {datekey: {Lables[9]: last.get(Lables[9]), Lables[18]: lastnow.get(Lables[18])}}})'''
 
             if now.get(Lables[13])!=0 :
                 lastnow[Lables[13]]=now.get(Lables[13])
@@ -764,7 +764,7 @@ def CMDUse():
     filePath=sys.argv[1]
     sys.exit(checkMain(filePath))
 if __name__ == '__main__':
-    # CheckFilepath = './Mergerdata/MergeData_20200401_23-35-16.csv'
+    # CheckFilepath = './Mergerdata/MergeData_20200401_20-20-16.csv'
     # print(checkMain(CheckFilepath))
     CMDUse()
     # filename = './Mergerdata/MergeData_20200216(3).csv'
