@@ -268,9 +268,9 @@ def exchangetooldcol(data):
         '累计确诊人数':sum_diag,
         '累计治愈人数':sum_cure,
         '累计死亡人数':sum_die,
-        '累计无症状感染人数':in_asymptomatic,
-        '累计无症状感染治愈人数':in_asy_cure,
-        '累计无症状感染死亡人数':in_asy_dir
+        '累计无症状感染人数':sum_asymptomatic,
+        '累计无症状感染治愈人数':sum_asy_cure,
+        '累计无症状感染死亡人数':sum_asy_dir
     }
     return daily
 
@@ -365,9 +365,9 @@ def check_last_data(data):
         '累计确诊人数':sum_diag,
         '累计治愈人数':sum_cure,
         '累计死亡人数':sum_die,
-        '累计无症状感染人数':in_asymptomatic,
-        '累计无症状感染治愈人数':in_asy_cure,
-        '累计无症状感染死亡人数':in_asy_dir
+        '累计无症状感染人数':sum_asymptomatic,
+        '累计无症状感染治愈人数':sum_asy_cure,
+        '累计无症状感染死亡人数':sum_asy_dir
     }
         
     return daily
