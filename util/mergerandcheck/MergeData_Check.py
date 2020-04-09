@@ -481,8 +481,7 @@ def computedS(dateList,compdics,proList,Lables):
             if index == 0:
                 lastnow=nowTolastnow(lastnow,now,Lables)
                 index+=1
-            #if pk=='广东':
-                #print(now,Lables[8],last,Lables[4])
+
             #当当前累计值不为0时候核查否则就用lastnow的核查
             g = datekey.split('月')
 
@@ -490,9 +489,11 @@ def computedS(dateList,compdics,proList,Lables):
             # print(g)
             if int(g[0]) < 2:
                 continue
-            elif int(g[0]) >= 2 and int(g[1]) < 16:
+            elif int(g[0]) >= 2  and int(g[0])<=3 and int(g[1]) < 16:
                 continue
-
+            # if pk == '福建':
+            #     print(datekey)
+            #     print(last.get(Lables[5]) != now.get(Lables[14]),  now, last)
             if last.get(Lables[4])!=now.get(Lables[13]):
                 if now.get(Lables[13])!=0:
                     SumErr+=1
@@ -607,7 +608,7 @@ def write2(filename,err):
         #print(g)
         if int(g[0])<2:
             continue
-        elif int(g[0])>=2 and int(g[1])<16:
+        elif int(g[0])>=2 and int(g[0])<=3 and int(g[1])<16:
             continue
         s=pk.get(pro).get(dates)
         wstr=''
@@ -764,7 +765,7 @@ def CMDUse():
     filePath=sys.argv[1]
     sys.exit(checkMain(filePath))
 if __name__ == '__main__':
-    # CheckFilepath = './Mergerdata/MergeData_20200401_20-20-16.csv'
+    # CheckFilepath = './Mergerdata/MergeData_20200409_15-48-49.csv'
     # print(checkMain(CheckFilepath))
     CMDUse()
     # filename = './Mergerdata/MergeData_20200216(3).csv'
